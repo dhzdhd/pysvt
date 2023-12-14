@@ -1,0 +1,23 @@
+import unittest
+from unittest.mock import patch, MagicMock
+from pathlib import Path
+from pysut import Tester
+
+
+class TestTester(unittest.TestCase):
+    def setUp(self):
+        self.func = MagicMock()
+        self.file = "tests/input.toml"
+        self.tester = Tester(self.func, self.file)
+
+    @patch("tomllib.load")
+    def test_parse_toml(self, mock_load):
+        mock_load.return_value = {"key": "value"}
+
+    # def test_call(self):
+    #     self.tester("arg1", "arg2", kwarg1="kwarg1")
+    #     self.func.assert_called_once_with("arg1", "arg2", kwarg1="kwarg1")
+
+
+if __name__ == "__main__":
+    unittest.main()
