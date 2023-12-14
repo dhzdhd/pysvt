@@ -2,9 +2,17 @@ from typing import Callable, Any
 import tomllib as toml
 from pathlib import Path
 from functools import wraps
-from pysut.utils import load_toml
+from pysut.utils import load_toml, parse
+from dataclasses import dataclass
 
 type Function = Callable[..., Any]
+
+
+@dataclass(frozen=True)
+class _Model:
+    name: str | None
+    input: Any
+    output: Any
 
 
 class Test:
@@ -13,10 +21,11 @@ class Test:
     def __init__(self, file: str | Path) -> None:
         assert isinstance(file, Path) or isinstance(file, str)
 
-        if not isinstance(file, Path):
-            self._file = Path(file)
-        else:
-            self._file = file
+        self._file = file if isinstance(file, Path) else Path(file)
+
+        d = self._load_toml(self._file)
+        self._parse(d)
+
         self._inputs: list[str] | None = None
         self._outputs: list[str] = []
 
@@ -33,11 +42,9 @@ class Test:
 
         return wrapper
 
+    def _load_toml(self, file: str | Path) -> dict[str, Any]:
+        with open(file, "rb") as file:
+            return toml.load(file)
 
-def test(file: str | Path):
-    print(load_toml(file))
-
-    def deco(func: Function):
-        return func
-
-    return deco
+    def _parse(self, data: dict[str, Any]):
+        print(data)

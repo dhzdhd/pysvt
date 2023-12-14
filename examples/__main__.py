@@ -1,4 +1,4 @@
-from pysut import Test, test
+from pysut import Test
 import itertools as it
 
 
@@ -10,7 +10,9 @@ def key(x):
 
 
 class Solution:
-    @test("examples/input.toml")
+    @Test("examples/input1.toml")
+    @Test("examples/input2.toml")
+    @Test("examples/input3.toml")
     def maxArea(self, height: [int], amount: int) -> int:
         choices = list(it.combinations(enumerate(height), amount))
         m = max(choices, key=key)
@@ -24,7 +26,7 @@ class Solution:
     #     return 1
 
 
-# sol = Solution()
-# print(sol.maxArea([1, 8, 6, 2, 5, 4, 8, 3, 7], 2))
-# print(sol.maxArea([1, 2, 1], 2))
+sol = Solution()
+print(sol.maxArea([1, 8, 6, 2, 5, 4, 8, 3, 7], 2))
+print(sol.maxArea([1, 2, 1], 2))
 # print(sol.a())
