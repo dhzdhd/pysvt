@@ -2,7 +2,7 @@ from typing import Callable, Any
 import tomllib as toml
 from pathlib import Path
 from functools import wraps
-
+from pysut.utils import load_toml
 
 type Function = Callable[..., Any]
 
@@ -27,13 +27,17 @@ class Test:
                 return func(*args, **kwargs)
 
             Test.called.append(id(func))
-            self._parse_toml()
+            print(load_toml(self._file))
 
             return func(*args, **kwargs)
 
         return wrapper
 
-    def _parse_toml(self):
-        with open(self._file, "rb") as file:
-            res = toml.load(file)
-            print(res)
+
+def test(file: str | Path):
+    print(load_toml(file))
+
+    def deco(func: Function):
+        return func
+
+    return deco

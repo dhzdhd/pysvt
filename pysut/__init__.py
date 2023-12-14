@@ -1,1 +1,1 @@
-from .__main__ import Test
+from .__main__ import Test, test
