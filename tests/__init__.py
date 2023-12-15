@@ -1,6 +1,7 @@
 import unittest
-from unittest.mock import patch, MagicMock
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
 from pysut import Tester
 
 

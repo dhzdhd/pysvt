@@ -1,12 +1,13 @@
-from typing import Callable, Any
-import tomllib as toml
-from pathlib import Path
-from functools import wraps
-from dataclasses import dataclass
 import inspect
+import time
+import tomllib as toml
+from dataclasses import dataclass
+from functools import wraps
+from pathlib import Path
+from typing import Any, Callable
+
 from rich.console import Console
 from rich.status import Status
-import time
 
 type Function = Callable[..., Any]
 
@@ -118,6 +119,7 @@ class Test:
             if data.inputs is not None:
                 if not isinstance(data.inputs, list):
                     raise ValidationError("Inputs must be nested within a list")
+
                 console.print(f"Input - {data.inputs}")
                 console.print(f"Expected output - {data.output}")
 

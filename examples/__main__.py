@@ -1,6 +1,7 @@
-from pysut import Test
 import itertools as it
 import time
+
+from pysut import Test
 
 
 def key(x):

@@ -1,0 +1,9 @@
+[flake8]
+max-line-length=110
+docstring-convention=all
+exclude=constants.py,__pycache__,.cache,
+        .git,
+        .md,.svg,.png
+        tests,
+        venv,.venv,
+        .json
