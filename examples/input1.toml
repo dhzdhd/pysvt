@@ -1,17 +1,15 @@
+[[cases]]
 [test_case_1]
-name = "Addition with positive numbers"
 inputs = [1, 2]
 outputs = 3
 metadata = "Basic addition functionality"
 
 [test_case_2]
-name = "Division with zero"
 inputs = [10, 0]
 outputs = "Division by zero error"
-metadata = "Error handling for edge cases"
+metadata = "Division with zero"
 
 [test_case_3]
-name = "Custom comparison logic"
 input = ""
 output = ""
-metadata = "Use custom assertion function for comparison"
+metadata = "Custom comparison logic"
