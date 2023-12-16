@@ -34,10 +34,11 @@ class test_cls:
         self._method = method
 
     def __call__(self, cls: object) -> Any:
-        print(cls)
+        # can use inspect too
         method = getattr(cls, self._method, None)
         if not callable(method):
             raise ValueError("Invalid method passed")
+        # pass __init__ args through toml file - init/class key
 
         @wraps(cls)
         def wrapper(*args, **kwargs):
@@ -56,7 +57,6 @@ class test_fn:
             raise ValueError("File type should be either str or Path")
 
         self._file = file if isinstance(file, Path) else Path(file)
-
         self._data: list[_Model] = []
 
         self._parse(self._load_toml(self._file))

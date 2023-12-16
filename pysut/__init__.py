@@ -1,1 +1,1 @@
-from .__main__ import test_fn
+from .__main__ import test_fn, test_cls
