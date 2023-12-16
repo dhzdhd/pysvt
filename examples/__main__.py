@@ -1,7 +1,7 @@
 import itertools as it
 import time
 
-from pysut import Test
+from pysut import test_fn
 
 
 def key(x):
@@ -12,7 +12,7 @@ def key(x):
 
 
 class Solution:
-    @Test("examples/input2.toml")
+    @test_fn("examples/input2.toml")
     def maxArea(height: [int], amount: int) -> int:
         time.sleep(1)
         choices = list(it.combinations(enumerate(height), amount))

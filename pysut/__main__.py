@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from functools import wraps
 from pathlib import Path
 from typing import Any, Callable
+import re
 
 from rich.console import Console
 from rich.status import Status
@@ -27,8 +28,25 @@ class ValidationError(Exception):
         super().__init__(*args)
 
 
-# Perhaps make a decorator for an entire class with specified method to test
-class Test:
+class test_cls:
+    def __init__(self, file: str | Path, method: str) -> None:
+        self._file = file
+        self._method = method
+
+    def __call__(self, cls: object) -> Any:
+        print(cls)
+        method = getattr(cls, self._method, None)
+        if not callable(method):
+            raise ValueError("Invalid method passed")
+
+        @wraps(cls)
+        def wrapper(*args, **kwargs):
+            return cls(*args, **kwargs)
+
+        return wrapper
+
+
+class test_fn:
     def __init__(
         self,
         file: str | Path,
@@ -72,24 +90,37 @@ class Test:
             return toml.load(file)
 
     def _parse(self, data: dict[str, Any]):
-        if not any(["o" in data, "outputs" in data, "data" in data]):
-            raise ValidationError("Must contain one of o, outputs or data keys")
-
         inputs = []
         outputs = []
         metadata = "No metadata"
         name = "Test case"
 
+        # Move printing to another fn
         if "cases" in data:
             ...
         else:
-            # Use regex to match o+, i+
-            if any(["o" in data, "out" in data, "output" in data, "outputs" in data]):
-                if any(["i" in data, "in" in data, "input" in data, "inputs" in data]):
-                    inputs = data["i"]
-                outputs = data["o"]
-            else:
-                raise ValidationError("No output data given")
+            output_re = re.compile(r"^o(?:ut|utput|utputs)?$")
+            input_re = re.compile(r"^i(?:n|nput|nputs)?$")
+
+            output_exists = False
+            for key in data.keys():
+                output_key = output_re.match(key)
+
+                if output_key is not None:
+                    output_exists = True
+                    print(output_key.string)
+                    outputs = data[output_key.string]
+                    break
+
+            for key in data.keys():
+                input_key = input_re.match(key)
+
+                if input_key is not None:
+                    inputs = data[input_key.string]
+                    break
+
+            if not output_exists:
+                raise ValidationError("No output data given or output key is invalid")
 
             if "metadata" in data:
                 metadata = data["metadata"]

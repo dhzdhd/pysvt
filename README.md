@@ -28,7 +28,7 @@ o = [3, 5]
 or
 
 ```toml
-[[data]]
+[[cases]]
 [one_and_two]
 i = [1, 2]
 o = 3

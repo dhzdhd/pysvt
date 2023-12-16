@@ -2,14 +2,14 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from pysut import Tester
+from pysut import test_fn
 
 
-class TestTester(unittest.TestCase):
+class FuncTester(unittest.TestCase):
     def setUp(self):
         self.func = MagicMock()
         self.file = "tests/input.toml"
-        self.tester = Tester(self.func, self.file)
+        self.tester = test_fn(self.func, self.file)
 
     @patch("tomllib.load")
     def test_parse_toml(self, mock_load):
