@@ -8,7 +8,6 @@ from typing import Any, Callable
 import re
 
 from rich.console import Console
-from rich.status import Status
 
 type Function = Callable[..., Any]
 
