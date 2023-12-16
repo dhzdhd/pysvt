@@ -13,6 +13,9 @@ def key(x):
 
 @test_cls("examples/input2.toml", "max_area")
 class Solution:
+    def __init__(self, a: int, b: str) -> None:
+        pass
+
     def max_area(self, height: [int], amount: int) -> int:
         time.sleep(1)
         choices = list(it.combinations(enumerate(height), amount))

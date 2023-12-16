@@ -76,12 +76,13 @@ A simple test case runner in Python that uses TOML configurations and decorator 
     or
 
     ```toml
+    init = []  # Has to be specified, indicates class constructor arguments
+
     [[cases]]
     [one_and_two]
     i = [1, 2]
     o = 3
     metadata = "Add to 3"
-    init = []  # Has to be specified, indicates class constructor arguments
 
     [two_and_three]
     i = [2, 3]
