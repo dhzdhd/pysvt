@@ -1,9 +1,18 @@
 [tool.poetry]
 name = "pysut"
 version = "0.1.0"
-description = "A simple unit test library"
+description = "A simple test case runner in Python that uses TOML configurations and decorator syntax."
 authors = ["dhzdhd"]
 readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[tool.hatch.metadata]
+Homepage = "https://github.com/dhzdhd/pysut"
+Issues = "https://github.com/dhzdhd/pysut/issues"
 
 [tool.poetry.dependencies]
 python = "^3.12"

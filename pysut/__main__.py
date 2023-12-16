@@ -2,7 +2,7 @@ import inspect
 import time
 import tomllib as toml
 from dataclasses import dataclass
-from functools import wraps
+from functools import wraps, partial
 from pathlib import Path
 from typing import Any, Callable
 import re
@@ -34,10 +34,13 @@ class test_cls:
         self._method = method
 
     def __call__(self, cls: object) -> Any:
-        # can use inspect too
         method = getattr(cls, self._method, None)
-        if not callable(method):
+
+        if not inspect.isfunction(method):
             raise ValueError("Invalid method passed")
+        else:
+            partial_method = partial(method, cls())
+            print(partial_method([1, 8, 6, 2, 5, 4, 8, 3, 7], 2))
         # pass __init__ args through toml file - init/class key
 
         @wraps(cls)
@@ -89,7 +92,7 @@ class test_fn:
         with open(file, "rb") as file:
             return toml.load(file)
 
-    def _parse(self, data: dict[str, Any]):
+    def _parse(self, data: dict[str, Any]) -> None:
         inputs = []
         outputs = []
         metadata = "No metadata"

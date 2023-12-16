@@ -11,9 +11,9 @@ def key(x):
     return abs(t2[0] - t1[0]) * abs(t2[1] - t1[1])
 
 
-@test_cls("examples/input2.toml", "maxArea")
+@test_cls("examples/input2.toml", "max_area")
 class Solution:
-    def maxArea(height: [int], amount: int) -> int:
+    def max_area(self, height: [int], amount: int) -> int:
         time.sleep(1)
         choices = list(it.combinations(enumerate(height), amount))
         m = max(choices, key=key)
@@ -24,7 +24,7 @@ class Solution:
 
 
 # @test_fn("examples/input2.toml")
-def maxArea(height: [int], amount: int) -> int:
+def max_area(height: [int], amount: int) -> int:
     time.sleep(1)
     choices = list(it.combinations(enumerate(height), amount))
     m = max(choices, key=key)
