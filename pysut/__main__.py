@@ -1,32 +1,17 @@
 import inspect
 import time
 import tomllib as toml
-from dataclasses import dataclass
 from functools import wraps, partial
 from pathlib import Path
 from typing import Any, Callable
 import re
 from pysut.utils.printer import Printer
-
+from pysut.utils.models import _ClsModel, _FuncModel, Result
 from rich.console import Console
 
 type Function = Callable[..., Any]
 
 console = Console()
-
-
-@dataclass(frozen=True)
-class _FuncModel:
-    inputs: list[Any]
-    output: Any
-    name: str | None = None
-    metadata: str | None = None
-
-
-@dataclass()
-class _ClsModel:
-    init: list[Any]
-    data: list[_FuncModel]
 
 
 class ValidationError(Exception):
@@ -45,6 +30,7 @@ class test_cls:
         self._printer = Printer(console)
 
         self._data: _ClsModel = _ClsModel([], [])
+        self.failures = 0
 
         self._parse(self._load_toml(self._file))
 
@@ -60,8 +46,17 @@ class test_cls:
             partial_method = partial(method, cls(*self._data.init))
 
         if "self" in method.__code__.co_varnames:
-            with self._printer.start() as status:
-                self._validate(partial_method)
+            with self._printer.init() as status:
+                for index, data in enumerate(self._data.data):
+                    self._printer.pre_validation(data)
+
+                    result = self._validate(index, data, partial_method)
+                    self.failures += 0 if result.valid else 1
+
+                    self._printer.post_validation(result.data)
+
+                self._printer.finish(len(self._data.data), self.failures)
+
         else:
             raise ValidationError(
                 "The decorator cannot be applied to non-instance methods"
@@ -84,12 +79,12 @@ class test_cls:
         name = "Test case"
         init = []
 
+        output_re = re.compile(r"^o(?:ut|utput|utputs)?$")
+        input_re = re.compile(r"^i(?:n|nput|nputs)?$")
+
         if "cases" in data:
             ...
         else:
-            output_re = re.compile(r"^o(?:ut|utput|utputs)?$")
-            input_re = re.compile(r"^i(?:n|nput|nputs)?$")
-
             output_exists = False
             for key in data.keys():
                 output_key = output_re.match(key)
@@ -129,50 +124,34 @@ class test_cls:
                         inputs=inputs[i],
                         output=outputs[i],
                         metadata=metadata,
-                        name=f"{name} [bold blue]{i + 1}[/bold blue]",
+                        name=f"{name} {Printer.number(i + 1)}",
                     )
                 )
             self._data.init = init
 
-    def _validate(self, func: Function):
-        failures = 0  # make class var
+    def _validate[T](self, index: int, data: _FuncModel, func: Function) -> Result[T]:
+        if data.inputs is not None:
+            if not isinstance(data.inputs, list):
+                raise ValidationError("Inputs must be nested within a list")
 
-        # move for loop out, make validate per item
-        for index, data in enumerate(self._data.data):
-            if data.inputs is not None:
-                if not isinstance(data.inputs, list):
-                    raise ValidationError("Inputs must be nested within a list")
+            result = func(*data.inputs)
+            # console.print(f"Actual output - {result}")
 
-                console.print(f"Input - {data.inputs}")
-                console.print(f"Expected output - {data.output}")
+            # if result != data.output:
+            # console.print(
+            #     f"\nTask [bold blue]{index + 1}[/bold blue] - [bold red]{data.name} failed\n\n"
+            # )
+            # self.failures += 1
+            # else:
+            # instead of printing, return result
+            # console.print(
+            #    f"\nTask [bold blue]{index + 1}[/bold blue] - [bold green]{data.name} complete\n\n"
+            # )
 
-                result = func(*data.inputs)
-                console.print(f"Actual output - {result}")
+        else:
+            result = func()
 
-                if result != data.output:
-                    console.print(
-                        f"\nTask [bold blue]{index + 1}[/bold blue] - [bold red]{data.name} failed\n\n"
-                    )
-                    failures += 1
-                else:
-                    # instead of printing, return result
-                    console.print(
-                        f"\nTask [bold blue]{index + 1}[/bold blue] - [bold green]{data.name} complete\n\n"
-                    )
-
-            else:
-                for o in self._outputs:
-                    assert func() == o
-
-        # move out
-        status = (
-            "[bold green]SUCCESS[/bold green]"
-            if failures == 0
-            else "[bold red]FAILURE[/bold red]"
-        )
-        console.print(
-            f"{status} | [bold green]{len(self._data.data) - failures} passed[/bold green] | [bold red]{failures} failed"
-        )
+        return Result(result, result != data.output)
 
 
 class test_fn:
@@ -271,7 +250,7 @@ class test_fn:
                 )
 
     def _validate(self, func: Function):
-        failures = 0
+        self.failures = 0
 
         for index, data in enumerate(self._data):
             if data.inputs is not None:
@@ -288,7 +267,7 @@ class test_fn:
                     console.print(
                         f"\nTask [bold blue]{index + 1}[/bold blue] - [bold red]{data.name} failed\n\n"
                     )
-                    failures += 1
+                    self.failures += 1
                 else:
                     console.print(
                         f"\nTask [bold blue]{index + 1}[/bold blue] - [bold green]{data.name} complete\n\n"
@@ -300,9 +279,9 @@ class test_fn:
 
         status = (
             "[bold green]SUCCESS[/bold green]"
-            if failures == 0
+            if self.failures == 0
             else "[bold red]FAILURE[/bold red]"
         )
         console.print(
-            f"{status} | [bold green]{len(self._data) - failures} passed[/bold green] | [bold red]{failures} failed"
+            f"{status} | [bold green]{len(self._data) - self.failures} passed[/bold green] | [bold red]{self.failures} failed"
         )
