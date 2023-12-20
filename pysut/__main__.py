@@ -6,6 +6,7 @@ from functools import wraps, partial
 from pathlib import Path
 from typing import Any, Callable
 import re
+from pysut.utils.printer import Printer
 
 from rich.console import Console
 
@@ -41,6 +42,8 @@ class test_cls:
         self._file = file if isinstance(file, Path) else Path(file)
         self._method = method
 
+        self._printer = Printer(console)
+
         self._data: _ClsModel = _ClsModel([], [])
 
         self._parse(self._load_toml(self._file))
@@ -57,7 +60,7 @@ class test_cls:
             partial_method = partial(method, cls(*self._data.init))
 
         if "self" in method.__code__.co_varnames:
-            with console.status("[bold green] Running tests...") as status:
+            with self._printer.start() as status:
                 self._validate(partial_method)
         else:
             raise ValidationError(
@@ -132,8 +135,9 @@ class test_cls:
             self._data.init = init
 
     def _validate(self, func: Function):
-        failures = 0
+        failures = 0  # make class var
 
+        # move for loop out, make validate per item
         for index, data in enumerate(self._data.data):
             if data.inputs is not None:
                 if not isinstance(data.inputs, list):
@@ -151,6 +155,7 @@ class test_cls:
                     )
                     failures += 1
                 else:
+                    # instead of printing, return result
                     console.print(
                         f"\nTask [bold blue]{index + 1}[/bold blue] - [bold green]{data.name} complete\n\n"
                     )
@@ -159,6 +164,7 @@ class test_cls:
                 for o in self._outputs:
                     assert func() == o
 
+        # move out
         status = (
             "[bold green]SUCCESS[/bold green]"
             if failures == 0
