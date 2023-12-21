@@ -51,7 +51,7 @@ class test_cls:
                 for index, data in enumerate(self._data.data):
                     self._printer.pre_validation(index, data)
 
-                    result = self._validate(index, data, partial_method)
+                    result = self._validate(data, partial_method)
                     failures += 0 if result.valid else 1
 
                     self._printer.post_validation(index, result, data.name)
@@ -130,21 +130,12 @@ class test_cls:
                 )
             self._data.init = init
 
-    def _validate(self, index: int, data: _FuncModel, func: Function) -> Result:
+    def _validate(self, data: _FuncModel, func: Function) -> Result:
         if data.inputs is not None:
             if not isinstance(data.inputs, list):
                 raise ValidationError("Inputs must be nested within a list")
 
             result = func(*data.inputs)
-            # if result != data.output:
-            # console.print(
-            #     f"\nTask [bold blue]{index + 1}[/bold blue] - [bold red]{data.name} failed\n\n"
-            # )
-            # else:
-            # console.print(
-            #    f"\nTask [bold blue]{index + 1}[/bold blue] - [bold green]{data.name} complete\n\n"
-            # )
-
         else:
             result = func()
 

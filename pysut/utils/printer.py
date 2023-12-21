@@ -40,7 +40,7 @@ class Printer:
         string = f"{str(l.renderable.renderable)}\nActual output - {res.data}"
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
 
-        l.update(Panel(string, title=f"{emoji}  {title}"))
+        l.update(Panel(string, title=f"{emoji}  {title}", subtitle="Time taken: 100ms"))
 
     def finish(self, total: int, failures: int) -> None:
         self._console.clear(True)
