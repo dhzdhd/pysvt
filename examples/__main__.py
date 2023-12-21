@@ -16,7 +16,7 @@ class Solution:
     def __init__(self, a: int, b: str) -> None:
         pass
 
-    def max_area(self, height: [int], amount: int) -> int:
+    def max_area(self, height: list[int], amount: int) -> int:
         time.sleep(1)
         choices = list(it.combinations(enumerate(height), amount))
         m = max(choices, key=key)
@@ -27,7 +27,7 @@ class Solution:
 
 
 # @test_fn("examples/input2.toml")
-def max_area(height: [int], amount: int) -> int:
+def max_area(height: list[int], amount: int) -> int:
     time.sleep(1)
     choices = list(it.combinations(enumerate(height), amount))
     m = max(choices, key=key)

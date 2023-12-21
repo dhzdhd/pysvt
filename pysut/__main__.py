@@ -69,8 +69,8 @@ class test_cls:
         return wrapper
 
     def _load_toml(self, file: str | Path) -> dict[str, Any]:
-        with open(file, "rb") as file:
-            return toml.load(file)
+        with open(file, "rb") as f:
+            return toml.load(f)
 
     def _parse(self, data: dict[str, Any]) -> None:
         inputs = []
@@ -129,7 +129,7 @@ class test_cls:
                 )
             self._data.init = init
 
-    def _validate[T](self, index: int, data: _FuncModel, func: Function) -> Result[T]:
+    def _validate(self, index: int, data: _FuncModel, func: Function) -> Result:
         if data.inputs is not None:
             if not isinstance(data.inputs, list):
                 raise ValidationError("Inputs must be nested within a list")
@@ -193,8 +193,8 @@ class test_fn:
         return wrapper
 
     def _load_toml(self, file: str | Path) -> dict[str, Any]:
-        with open(file, "rb") as file:
-            return toml.load(file)
+        with open(file, "rb") as f:
+            return toml.load(f)
 
     def _parse(self, data: dict[str, Any]) -> None:
         inputs = []

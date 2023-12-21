@@ -17,6 +17,7 @@ Issues = "https://github.com/dhzdhd/pysut/issues"
 [tool.poetry.dependencies]
 python = "^3.12"
 rich = "^13.7.0"
+pyright = "^1.1.342"
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.2"
@@ -32,7 +33,16 @@ lint = "flake8 ."
 sort = "isort ."
 sortc = "isort -c ."
 test = "pytest tests"
+type = "pyright "
 publish = "poetry build; poetry publish"
+
+[tool.pyright]
+include = ["pysut", "examples"]
+defineConstant = { DEBUG = true }
+reportMissingImports = true
+reportMissingTypeStubs = false
+pythonVersion = "3.12"
+pythonPlatform = "Windows"
 
 [build-system]
 requires = ["poetry-core"]

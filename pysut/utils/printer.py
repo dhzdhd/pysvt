@@ -49,5 +49,5 @@ class Printer:
         return f"[bold red]{data}[/bold red]"
 
     @staticmethod
-    def number(data: str) -> str:
+    def number(data: int) -> str:
         return f"[bold blue]{data}[/bold blue]"
