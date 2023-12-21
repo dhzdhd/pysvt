@@ -30,7 +30,6 @@ class test_cls:
         self._printer = Printer(console)
 
         self._data: _ClsModel = _ClsModel([], [])
-        self.failures = 0
 
         self._parse(self._load_toml(self._file))
 
@@ -46,16 +45,18 @@ class test_cls:
             partial_method = partial(method, cls(*self._data.init))
 
         if "self" in method.__code__.co_varnames:
-            with self._printer.init() as status:
+            with self._printer.init(self._data.data) as status:
+                failures = 0
+
                 for index, data in enumerate(self._data.data):
-                    self._printer.pre_validation(data)
+                    self._printer.pre_validation(index, data)
 
                     result = self._validate(index, data, partial_method)
-                    self.failures += 0 if result.valid else 1
+                    failures += 0 if result.valid else 1
 
-                    self._printer.post_validation(result.data)
+                    self._printer.post_validation(index, result, data.name)
 
-                self._printer.finish(len(self._data.data), self.failures)
+            self._printer.finish(len(self._data.data), failures)
 
         else:
             raise ValidationError(
@@ -135,15 +136,11 @@ class test_cls:
                 raise ValidationError("Inputs must be nested within a list")
 
             result = func(*data.inputs)
-            # console.print(f"Actual output - {result}")
-
             # if result != data.output:
             # console.print(
             #     f"\nTask [bold blue]{index + 1}[/bold blue] - [bold red]{data.name} failed\n\n"
             # )
-            # self.failures += 1
             # else:
-            # instead of printing, return result
             # console.print(
             #    f"\nTask [bold blue]{index + 1}[/bold blue] - [bold green]{data.name} complete\n\n"
             # )
@@ -151,7 +148,7 @@ class test_cls:
         else:
             result = func()
 
-        return Result(result, result != data.output)
+        return Result(result, result == data.output)
 
 
 class test_fn:

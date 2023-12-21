@@ -1,34 +1,52 @@
 from rich import print
-from rich.console import Console
+from rich.console import Console, ConsoleOptions
 from rich.status import Status
 from rich.layout import Layout
 from rich.panel import Panel
 from typing import Any
-from .models import _FuncModel
-
-layout = Layout(name="Tasks")
+from .models import _FuncModel, Result
+from rich.live import Live
 
 
 class Printer:
     def __init__(self, console: Console) -> None:
         self._console = console
+        self._layout = Layout()
 
-    def init(self) -> Status:
-        p = Panel("helllo")
-        layout.update(p)
-        print(layout)
+    def init(self, data: list[_FuncModel]) -> Status:
+        for index, item in enumerate(data):
+            l = Layout(Panel(item.name, title=item.name), name=index)
+            self._layout.add_split(l)
 
-        return self._console.status("Running tests...")
-        # add layout, panel, render group
+        self._console.clear(True)
 
-    def pre_validation(self, data: _FuncModel) -> None:
-        self._console.print(f"Input - {data.inputs}")
-        self._console.print(f"Expected output - {data.output}")
+        # return self._console.status("Running tests...")
+        return Live(
+            self._layout,
+            console=self._console,
+            refresh_per_second=10,
+            screen=True,
+            transient=True,
+        )
 
-    def post_validation(self, data: Any) -> None:
-        self._console.print(f"Actual output - {data}")
+    def pre_validation(self, index: int, data: _FuncModel) -> None:
+        l = self._layout.children[index]
+        string = f"Input - {data.inputs}\nExpected output - {data.output}"
+        l.update(Panel(string, title=data.name))
+
+    def post_validation(self, index: int, res: Result, title: str) -> None:
+        l = self._layout.children[index]
+
+        string = f"{str(l.renderable.renderable)}\nActual output - {res.data}"
+        emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
+
+        l.update(Panel(string, title=f"{emoji}  {title}"))
 
     def finish(self, total: int, failures: int) -> None:
+        self._console.clear(True)
+        self._console.clear_live()
+        print(self._layout)
+
         success = Printer.success(f"{total - failures} passed")
         failure = Printer.error(f"{failures} failed")
 
