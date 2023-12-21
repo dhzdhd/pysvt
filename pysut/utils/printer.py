@@ -1,11 +1,11 @@
 from rich import print
-from rich.console import Console, ConsoleOptions
+from rich.console import Console, ConsoleOptions, Group
 from rich.status import Status
 from rich.layout import Layout
 from rich.panel import Panel
 from typing import Any
 from .models import _FuncModel, Result
-from rich.live import Live
+from rich.live import Live, VerticalOverflowMethod
 
 
 class Printer:
@@ -15,19 +15,22 @@ class Printer:
 
     def init(self, data: list[_FuncModel]) -> Status:
         for index, item in enumerate(data):
-            l = Layout(Panel(item.name, title=item.name), name=index)
+            l = Layout(
+                Panel(item.name, title=item.name),
+                name=index,
+            )
             self._layout.add_split(l)
 
         self._console.clear(True)
 
-        # return self._console.status("Running tests...")
-        return Live(
+        self._live = Live(
             self._layout,
             console=self._console,
             refresh_per_second=10,
             screen=True,
-            transient=True,
+            vertical_overflow="visible",
         )
+        return self._live
 
     def pre_validation(self, index: int, data: _FuncModel) -> None:
         l = self._layout.children[index]
@@ -40,11 +43,21 @@ class Printer:
         string = f"{str(l.renderable.renderable)}\nActual output - {res.data}"
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
 
-        l.update(Panel(string, title=f"{emoji}  {title}", subtitle="Time taken: 100ms"))
+        l.update(
+            Panel(
+                string,
+                title=f"{emoji}  {title}",
+                subtitle="Time taken: 100ms",
+                subtitle_align="right",
+            )
+        )
 
     def finish(self, total: int, failures: int) -> None:
         self._console.clear(True)
-        self._console.clear_live()
+        self._live.stop()
+
+        for i in self._layout.children:
+            i.minimum_size = 10
         print(self._layout)
 
         success = Printer.success(f"{total - failures} passed")

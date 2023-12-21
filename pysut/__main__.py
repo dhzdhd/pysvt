@@ -76,17 +76,50 @@ class test_cls:
     def _parse(self, data: dict[str, Any]) -> None:
         inputs = []
         outputs = []
-        metadata = "No metadata"
-        name = "Test case"
-        init = []
+        metadata = ["No metadata"]
+        name = ["Test case"]
+        init = [[]]
+
+        output_exists = False
 
         output_re = re.compile(r"^o(?:ut|utput|utputs)?$")
         input_re = re.compile(r"^i(?:n|nput|nputs)?$")
 
         if "cases" in data:
-            ...
+            for case in data["cases"]:
+                for key, val in case.items():
+                    print(key)
+
+                if not output_exists:
+                    raise ValidationError(
+                        "No output data given or output key is invalid"
+                    )
+
+                if "metadata" in case:
+                    metadata = case["metadata"]
+
+                if "name" in case:
+                    name = case["name"]
+
+                if "init" in case:
+                    init = case["init"]
+
+                if len(inputs) != len(outputs):
+                    raise ValidationError(
+                        "Input and output data are not of the same length"
+                    )
+
+            for i in range(len(outputs)):
+                self._data.data.append(
+                    _FuncModel(
+                        inputs=inputs[i],
+                        output=outputs[i],
+                        metadata=metadata,
+                        name=f"{name} {Printer.number(i + 1)}",
+                    )
+                )
+            self._data.init = init
         else:
-            output_exists = False
             for key in data.keys():
                 output_key = output_re.match(key)
 
@@ -106,13 +139,13 @@ class test_cls:
                 raise ValidationError("No output data given or output key is invalid")
 
             if "metadata" in data:
-                metadata = data["metadata"]
+                metadata[0] = data["metadata"]
 
             if "name" in data:
-                name = data["name"]
+                name[0] = data["name"]
 
             if "init" in data:
-                init = data["init"]
+                init[0] = data["init"]
 
             if len(inputs) != len(outputs):
                 raise ValidationError(
@@ -124,11 +157,11 @@ class test_cls:
                     _FuncModel(
                         inputs=inputs[i],
                         output=outputs[i],
-                        metadata=metadata,
-                        name=f"{name} {Printer.number(i + 1)}",
+                        metadata=metadata[0],
+                        name=f"{name[0]} {Printer.number(i + 1)}",
                     )
                 )
-            self._data.init = init
+            self._data.init = init[0]
 
     def _validate(self, data: _FuncModel, func: Function) -> Result:
         if data.inputs is not None:
@@ -190,7 +223,6 @@ class test_fn:
         metadata = "No metadata"
         name = "Test case"
 
-        # Move printing to another fn
         if "cases" in data:
             ...
         else:
