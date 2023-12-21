@@ -27,6 +27,7 @@ class Printer:
             self._layout,
             console=self._console,
             refresh_per_second=10,
+            # Turn off and transient=False to avoid printing again
             screen=True,
             vertical_overflow="visible",
         )
@@ -56,8 +57,6 @@ class Printer:
         self._console.clear(True)
         self._live.stop()
 
-        for i in self._layout.children:
-            i.minimum_size = 10
         print(self._layout)
 
         success = Printer.success(f"{total - failures} passed")
