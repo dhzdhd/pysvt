@@ -13,17 +13,17 @@ class Sample:
 
 def test_incorrect_toml_file():
     with pytest.raises(FileNotFoundError):
-        sample = test_fn("tests/inputt.toml")(sample)
+        test_fn("tests/inputt.toml")(sample)
 
 
 def test_invalid_file_entry_type():
     with pytest.raises(ValueError):
-        sample = test_fn(5)(sample)
+        test_fn(5)(sample)
 
 
 def test_instance_methods():
     with pytest.raises(ValueError):
-        Sample.sample = test_fn(5)(Sample.sample)
+        test_fn(5)(Sample.sample)
 
 
 def test_incorrect_output_key():

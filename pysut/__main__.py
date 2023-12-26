@@ -45,7 +45,7 @@ class test_cls:
             partial_method = partial(method, cls(*self._data.init))
 
         if "self" in method.__code__.co_varnames:
-            with self._printer.init(self._data.data) as status:
+            with self._printer.init(self._data.data) as _:
                 failures = 0
 
                 for index, data in enumerate(self._data.data):

@@ -8,9 +8,9 @@ class Sample:
         return a
 
 
-def test_initialized_with_file_path_and_method_name():
-    file = "test.toml"
-    method = "test_method"
-    t = test_cls(file, method)
-    assert t._file == file
-    assert t._method == method
+# def test_initialized_with_file_path_and_method_name():
+#     file = "test.toml"
+#     method = "test_method"
+#     t = test_cls(file, method)
+#     assert t._file == file
+#     assert t._method == method

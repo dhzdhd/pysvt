@@ -13,7 +13,7 @@ class Printer:
         self._console = console
         self._layout = Layout()
 
-    def init(self, data: list[_FuncModel]) -> Status:
+    def init(self, data: list[_FuncModel]) -> Live:
         for index, item in enumerate(data):
             l = Layout(
                 Panel(item.name, title=item.name),
