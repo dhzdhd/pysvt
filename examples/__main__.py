@@ -1,7 +1,7 @@
 import itertools as it
 import time
 
-from pysut import test, test_fn, test_cls
+from pysut import test
 
 
 def key(x):
@@ -11,7 +11,7 @@ def key(x):
     return abs(t2[0] - t1[0]) * abs(t2[1] - t1[1])
 
 
-@test("examples/input1.toml", "max_area")
+@test("examples/input1.toml", "max_area", True)
 class Solution:
     def __init__(self, a: int, b: str) -> None:
         pass

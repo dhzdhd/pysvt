@@ -20,12 +20,15 @@ class ValidationError(Exception):
 
 
 class test:
-    def __init__(self, file: str | Path, method: str | None = None) -> None:
+    def __init__(
+        self, file: str | Path, method: str | None = None, error_only: bool = False
+    ) -> None:
         if not (isinstance(file, Path) or isinstance(file, str)):
             raise ValueError("File type should be either str or Path")
 
         self._file = file if isinstance(file, Path) else Path(file)
         self._method = method
+        self._show_error_only = error_only
 
         self._printer = Printer(console)
 
@@ -58,7 +61,9 @@ class test:
                     result = self._validate(data, partial_method)
                     failures += 0 if result.valid else 1
 
-                    self._printer.post_validation(index, result, data.name)
+                    self._printer.post_validation(
+                        result, data.name, self._show_error_only
+                    )
 
             self._printer.finish(len(self._data.data), failures)
         else:
@@ -76,7 +81,9 @@ class test:
                     result = self._validate(data, obj)
                     failures += 0 if result.valid else 1
 
-                    self._printer.post_validation(index, result, data.name)
+                    self._printer.post_validation(
+                        result, data.name, self._show_error_only
+                    )
 
             self._printer.finish(len(self._data), failures)
 

@@ -17,7 +17,7 @@ class Printer:
         for index, item in enumerate(data):
             l = Layout(
                 Panel(item.name, title=item.name),
-                name=index,
+                name=item.name,
             )
             self._layout.add_split(l)
 
@@ -34,24 +34,27 @@ class Printer:
         return self._live
 
     def pre_validation(self, index: int, data: _FuncModel) -> None:
-        l = self._layout.children[index]
+        l = next(filter(lambda x: x.name == data.name, self._layout.children))
         string = f"Input - {data.inputs}\nExpected output - {data.output}"
         l.update(Panel(string, title=data.name))
 
-    def post_validation(self, index: int, res: Result, title: str) -> None:
-        l = self._layout.children[index]
+    def post_validation(self, res: Result, title: str, show_error_only: bool) -> None:
+        l = next(filter(lambda x: x.name == title, self._layout.children))
 
         string = f"{str(l.renderable.renderable)}\nActual output - {res.data}"
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
 
-        l.update(
-            Panel(
-                string,
-                title=f"{emoji}  {title}",
-                subtitle="Time taken: 100ms",
-                subtitle_align="right",
+        if show_error_only and res.valid:
+            l.visible = False
+        else:
+            l.update(
+                Panel(
+                    string,
+                    title=f"{emoji}  {title}",
+                    subtitle="Time taken: 100ms",
+                    subtitle_align="right",
+                )
             )
-        )
 
     def finish(self, total: int, failures: int) -> None:
         self._console.clear(True)
