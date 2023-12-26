@@ -19,6 +19,174 @@ class ValidationError(Exception):
         super().__init__(*args)
 
 
+class test:
+    def __init__(self, file: str | Path, method: str | None = None) -> None:
+        if not (isinstance(file, Path) or isinstance(file, str)):
+            raise ValueError("File type should be either str or Path")
+
+        self._file = file if isinstance(file, Path) else Path(file)
+        self._method = method
+
+        self._printer = Printer(console)
+
+        self._data: _ClsModel | list[_FuncModel] | None = None
+
+    def __call__(self, obj: object) -> Any:
+        is_class = inspect.isclass(obj)
+        self._data = _ClsModel([], []) if is_class else []
+
+        self._parse(self._load_file(), is_class)
+
+        if is_class:
+            if self._method is None:
+                raise ValueError("method argument not provided")
+
+            method = getattr(obj, self._method, None)
+
+            if "self" not in method.__code__.co_varnames:
+                raise ValidationError(
+                    "The decorator cannot be applied to non-instance methods. Instead, use it directly on the function"
+                )
+
+            with self._printer.init(self._data.data) as _:
+                failures = 0
+
+                for index, data in enumerate(self._data.data):
+                    self._printer.pre_validation(index, data)
+
+                    partial_method = partial(method, obj(*self._data.init[index]))
+                    result = self._validate(data, partial_method)
+                    failures += 0 if result.valid else 1
+
+                    self._printer.post_validation(index, result, data.name)
+
+            self._printer.finish(len(self._data.data), failures)
+        else:
+            if "self" in obj.__code__.co_varnames:
+                raise ValidationError(
+                    "The decorator cannot be applied to instance methods. Instead, apply it on the class and pass the name of the method as an argument"
+                )
+
+            with self._printer.init(self._data) as _:
+                failures = 0
+
+                for index, data in enumerate(self._data):
+                    self._printer.pre_validation(index, data)
+
+                    result = self._validate(data, obj)
+                    failures += 0 if result.valid else 1
+
+                    self._printer.post_validation(index, result, data.name)
+
+            self._printer.finish(len(self._data), failures)
+
+        @wraps(obj)
+        def wrapper(*args, **kwargs):
+            return obj(*args, **kwargs)
+
+        return wrapper
+
+    def _load_file(self) -> dict[str, Any]:
+        with open(self._file, "rb") as f:
+            return toml.load(f)
+
+    def _parse(self, data: dict[str, Any], is_class: bool) -> None:
+        inputs = []
+        outputs = []
+        metadata = ["No metadata"]
+        name = ["Test case"]
+        init = [[]]
+
+        output_re = re.compile(r"^o(?:ut|utput|utputs)?$")
+        input_re = re.compile(r"^i(?:n|nput|nputs)?$")
+
+        if "cases" in data:
+            for case in data["cases"]:
+                for key in case.keys():
+                    output_key = output_re.match(key)
+
+                    if output_key is not None:
+                        outputs.append(data[output_key.string])
+                        break
+
+                for key in case.keys():
+                    input_key = input_re.match(key)
+
+                    if input_key is not None:
+                        inputs.append(data[input_key.string])
+                        break
+
+                if "metadata" in case:
+                    metadata.append(case["metadata"])
+
+                if "name" in case:
+                    name.append(case["name"])
+
+                if "init" in case:
+                    init.append(case["init"])
+        else:
+            for key in data.keys():
+                output_key = output_re.match(key)
+
+                if output_key is not None:
+                    output_exists = True
+                    outputs = data[output_key.string]
+                    break
+
+            for key in data.keys():
+                input_key = input_re.match(key)
+
+                if input_key is not None:
+                    inputs = data[input_key.string]
+                    break
+
+            if not output_exists:
+                raise ValidationError("No output data given or output key is invalid")
+
+            if "metadata" in data:
+                metadata = data["metadata"]
+
+            if "name" in data:
+                name = data["name"]
+
+            if "init" in data:
+                init = data["init"]
+
+        if outputs == []:
+            raise ValidationError("No output data given or output key is invalid")
+
+        # Check all kw len
+        if inputs != [] and len(inputs) != len(outputs):
+            raise ValidationError("Input and output data are not of the same length")
+
+        if is_class:
+            self._data.init = init
+
+        for i in range(len(outputs)):
+            func_model = _FuncModel(
+                inputs=inputs[i],
+                output=outputs[i],
+                metadata=metadata,
+                name=f"{name} {Printer.number(i + 1)}",
+            )
+
+            if is_class:
+                self._data.data.append(func_model)
+            else:
+                self._data.append(func_model)
+
+    def _validate(self, data: _FuncModel, func: Function) -> Result:
+        if data.inputs is not None:
+            if not isinstance(data.inputs, list):
+                raise ValidationError("Inputs must be nested within a list")
+
+            result = func(*data.inputs)
+        else:
+            result = func()
+
+        return Result(result, result == data.output)
+
+
 class test_cls:
     def __init__(self, file: str | Path, method: str) -> None:
         if not (isinstance(file, Path) or isinstance(file, str)):
@@ -31,7 +199,7 @@ class test_cls:
 
         self._data: _ClsModel = _ClsModel([], [])
 
-        self._parse(self._load_toml(self._file))
+        self._parse(self._load_toml())
 
     def __call__(self, cls: object) -> Any:
         if not inspect.isclass(cls):
@@ -69,8 +237,8 @@ class test_cls:
 
         return wrapper
 
-    def _load_toml(self, file: str | Path) -> dict[str, Any]:
-        with open(file, "rb") as f:
+    def _load_toml(self) -> dict[str, Any]:
+        with open(self._file, "rb") as f:
             return toml.load(f)
 
     def _parse(self, data: dict[str, Any]) -> None:
@@ -187,7 +355,7 @@ class test_fn:
         self._file = file if isinstance(file, Path) else Path(file)
         self._data: list[_FuncModel] = []
 
-        self._parse(self._load_toml(self._file))
+        self._parse(self._load_toml())
 
         if func is not None:
             if inspect.isfunction(func):
@@ -213,8 +381,8 @@ class test_fn:
 
         return wrapper
 
-    def _load_toml(self, file: str | Path) -> dict[str, Any]:
-        with open(file, "rb") as f:
+    def _load_toml(self) -> dict[str, Any]:
+        with open(self._file, "rb") as f:
             return toml.load(f)
 
     def _parse(self, data: dict[str, Any]) -> None:
