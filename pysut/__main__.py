@@ -93,9 +93,9 @@ class test:
     def _parse(self, data: dict[str, Any], is_class: bool) -> None:
         inputs = []
         outputs = []
-        metadata = ["No metadata"]
-        name = ["Test case"]
-        init = [[]]
+        metadata = []
+        name = []
+        init = []
 
         output_re = re.compile(r"^o(?:ut|utput|utputs)?$")
         input_re = re.compile(r"^i(?:n|nput|nputs)?$")
@@ -106,14 +106,14 @@ class test:
                     output_key = output_re.match(key)
 
                     if output_key is not None:
-                        outputs.append(data[output_key.string])
+                        outputs.append(case[output_key.string])
                         break
 
                 for key in case.keys():
                     input_key = input_re.match(key)
 
                     if input_key is not None:
-                        inputs.append(data[input_key.string])
+                        inputs.append(case[input_key.string])
                         break
 
                 if "metadata" in case:
@@ -166,8 +166,8 @@ class test:
             func_model = _FuncModel(
                 inputs=inputs[i],
                 output=outputs[i],
-                metadata=metadata,
-                name=f"{name} {Printer.number(i + 1)}",
+                metadata=metadata[i],
+                name=f"{name[i]} {Printer.number(i + 1)}",
             )
 
             if is_class:

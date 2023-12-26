@@ -1,15 +1,20 @@
 [[cases]]
-[test_case_1]
-inputs = [1, 2]
-outputs = 3
+name = "test_case_1"
+init = [1, 2]
+inputs = [[1, 8, 6, 2, 5, 4, 8, 3, 7], 2]
+outputs = 49
 metadata = "Basic addition functionality"
 
-[test_case_2]
-inputs = [10, 0]
-outputs = "Division by zero error"
+[[cases]]
+name = "test_case_2"
+init = [1, 2]
+i = [[1, 2, 1], 2]
+o = 5
 metadata = "Division with zero"
 
-[test_case_3]
-input = ""
-output = ""
+[[cases]]
+name = "test_case_3"
+init = [1, 7]
+input = [[1, 2, 3, 1], 2]
+output = 3
 metadata = "Custom comparison logic"

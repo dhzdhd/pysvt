@@ -11,7 +11,7 @@ def key(x):
     return abs(t2[0] - t1[0]) * abs(t2[1] - t1[1])
 
 
-@test("examples/input2.toml", "max_area")
+@test("examples/input1.toml", "max_area")
 class Solution:
     def __init__(self, a: int, b: str) -> None:
         pass
@@ -26,7 +26,7 @@ class Solution:
         return abs(t2[0] - t1[0]) * abs(t2[1] - t1[1]) + 1
 
 
-@test("examples/input2.toml")
+# @test("examples/input2.toml")
 def max_area(height: list[int], amount: int) -> int:
     time.sleep(1)
     choices = list(it.combinations(enumerate(height), amount))
