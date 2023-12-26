@@ -15,9 +15,9 @@ A simple test case runner in Python that uses TOML configurations and decorator 
     Python
 
     ```python
-    from pysut import test_fn
+    from pysut import test
 
-    @test_fn("<path_to_TOML_file>")
+    @test("<path_to_TOML_file>")
     def function(arg1: int, arg2: int) -> int:
         return arg1 + arg2
     ```
@@ -35,12 +35,13 @@ A simple test case runner in Python that uses TOML configurations and decorator 
 
     ```toml
     [[cases]]
-    [one_and_two]
+    name = "One and Two"
     i = [1, 2]
     o = 3
     metadata = "Add to 3"
 
-    [two_and_three]
+    [[cases]]
+    name = "Two and Three"
     i = [2, 3]
     o = 5
     metadata = "Add to 5"
@@ -54,10 +55,10 @@ A simple test case runner in Python that uses TOML configurations and decorator 
     Python
 
     ```python
-    from pysut import test_cls
+    from pysut import test
 
     # Specify the name of the method as the second argument
-    @test_cls("<path_to_TOML_file>", "function")
+    @test("<path_to_TOML_file>", "function")
     class Solution:
         def function(self, arg1: int, arg2: int) -> int:
             return arg1 + arg2
@@ -76,19 +77,19 @@ A simple test case runner in Python that uses TOML configurations and decorator 
     or
 
     ```toml
-    init = []  # Has to be specified, indicates class constructor arguments
-
     [[cases]]
-    [one_and_two]
+    name = "One and Two"
     i = [1, 2]
     o = 3
     metadata = "Add to 3"
+    init = []  # Has to be specified, indicates class constructor arguments
 
-    [two_and_three]
+    [[cases]]
+    name = "Two and Three"
     i = [2, 3]
     o = 5
     metadata = "Add to 5"
-    init = []  # Has to be specified, indicates class constructor arguments
+    init = []
     ```
 
     - Input key can be either of - i, in, input, inputs

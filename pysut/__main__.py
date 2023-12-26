@@ -91,6 +91,7 @@ class test:
             return toml.load(f)
 
     def _parse(self, data: dict[str, Any], is_class: bool) -> None:
+        # Set defaults at the end
         inputs = []
         outputs = []
         metadata = []
