@@ -23,7 +23,7 @@ Issues = "https://github.com/dhzdhd/pysvt/issues"
 # Documentation = ""
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.8.1"
 rich = "^13.7.0"
 
 [tool.poetry.group.dev.dependencies]
