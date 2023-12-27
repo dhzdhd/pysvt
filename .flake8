@@ -7,5 +7,5 @@ exclude=constants.py,__pycache__,.cache,
         tests,
         venv,.venv,
         .json,
-        pysut/__init__.py
+        pysvt/__init__.py
 extend-ignore=E501

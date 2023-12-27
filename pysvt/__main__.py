@@ -20,9 +20,9 @@ from typing import Any, Callable
 
 from rich.console import Console
 
-from pysut.utils.ctx import Timer
-from pysut.utils.models import Result, _ClsModel, _FuncModel
-from pysut.utils.printer import Printer
+from pysvt.utils.ctx import Timer
+from pysvt.utils.models import Result, _ClsModel, _FuncModel
+from pysvt.utils.printer import Printer
 
 console = Console()
 

@@ -1,5 +1,5 @@
 import pytest
-from pysut import test_fn, ValidationError
+from pysvt import test_fn, ValidationError
 import json
 import tomllib
 

@@ -1,5 +1,5 @@
 import pytest
-from pysut import test_cls, ValidationError
+from pysvt import test_cls, ValidationError
 from tomllib import load
 
 

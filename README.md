@@ -1,4 +1,4 @@
-# pysut
+# pysvt
 
 ## About
 
@@ -6,7 +6,7 @@ A simple test case runner in Python that uses TOML configurations and decorator 
 
 ## Installation
 
-`pip install pysut`
+`pip install pysvt`
 
 ## Usage
 
@@ -15,7 +15,7 @@ A simple test case runner in Python that uses TOML configurations and decorator 
     Python
 
     ```python
-    from pysut import test
+    from pysvt import test
 
     @test("<path_to_TOML_file>")
     def function(arg1: int, arg2: int) -> int:
@@ -55,7 +55,7 @@ A simple test case runner in Python that uses TOML configurations and decorator 
     Python
 
     ```python
-    from pysut import test
+    from pysvt import test
 
     # Specify the name of the method as the second argument
     @test("<path_to_TOML_file>", "function")

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pysut"
+name = "pysvt"
 version = "0.1.0"
 description = "A simple test case runner in Python that uses TOML configurations and decorator syntax."
 authors = ["dhzdhd <dhzdhd@proton.me>"]
@@ -16,10 +16,10 @@ classifiers = [
 license = "LICENSE"
 
 [tool.hatch.metadata]
-Homepage = "https://github.com/dhzdhd/pysut"
-Repository = "https://github.com/dhzdhd/pysut.git"
-Issues = "https://github.com/dhzdhd/pysut/issues"
-# Changelog = "https://github.com/dhzdhd/pysut/blob/master/CHANGELOG.md"
+Homepage = "https://github.com/dhzdhd/pysvt"
+Repository = "https://github.com/dhzdhd/pysvt.git"
+Issues = "https://github.com/dhzdhd/pysvt/issues"
+# Changelog = "https://github.com/dhzdhd/pysvt/blob/master/CHANGELOG.md"
 # Documentation = ""
 
 [tool.poetry.dependencies]
@@ -38,16 +38,16 @@ pytest-cov = "^4.1.0"
 [tool.taskipy.tasks]
 example = "python examples/__main__.py"
 format = "black --check ."
-lint = "flake8 pysut"
-sort = "isort pysut"
-sortc = "isort -c pysut"
+lint = "flake8 pysvt"
+sort = "isort pysvt"
+sortc = "isort -c pysvt"
 test = "pytest tests"
 type = "pyright "
 cov = "pytest --cov=tests/"
-publish = "poetry build; poetry publish"
+publish = "poetry publish --build"
 
 [tool.pyright]
-include = ["pysut", "examples"]
+include = ["pysvt", "examples"]
 defineConstant = { DEBUG = true }
 reportMissingImports = true
 reportMissingTypeStubs = false
