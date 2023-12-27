@@ -117,11 +117,12 @@ class test:
                 for index, data in enumerate(self._data):
                     self._printer.pre_validation(index, data)
 
-                    result = self._validate(data, obj)
+                    with Timer() as timer:
+                        result = self._validate(data, obj)
                     failures += 0 if result.valid else 1
 
                     self._printer.post_validation(
-                        result, data.name, self._show_error_only
+                        result, data.name, timer(), self._show_error_only
                     )
 
             self._printer.finish(len(self._data), failures)
