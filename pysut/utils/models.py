@@ -17,6 +17,6 @@ class _ClsModel:
 
 
 @dataclass(frozen=True)
-class Result[T]:
-    data: T
+class Result:
+    data: Any
     valid: bool

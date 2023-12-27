@@ -12,7 +12,6 @@ Functions:
 """
 
 import inspect
-import time
 import tomllib as toml
 from functools import wraps, partial
 from pathlib import Path
@@ -23,7 +22,6 @@ from pysut.utils.models import _ClsModel, _FuncModel, Result
 from pysut.utils.ctx import Timer
 from rich.console import Console
 
-type Function = Callable[..., Any]
 
 console = Console()
 
@@ -260,13 +258,13 @@ class test:
             else:
                 self._data.append(func_model)
 
-    def _validate(self, data: _FuncModel, func: Function) -> Result:
+    def _validate(self, data: _FuncModel, func: Callable[..., Any]) -> Result:
         """
         Validates a test case by executing the test function and comparing the result with the expected output.
 
         Args:
         - `data` (_FuncModel): The test case data.
-        - `func` (Function): The test function to be executed.
+        - `func` (Callable[..., Any]): The test function to be executed.
 
         Returns:
         - Result: The validation result, including the actual result and a flag indicating whether the test passed or failed.

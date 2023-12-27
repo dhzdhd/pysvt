@@ -1,11 +1,9 @@
 from rich import print
-from rich.console import Console, ConsoleOptions, Group
-from rich.status import Status
+from rich.console import Console
 from rich.layout import Layout
 from rich.panel import Panel
-from typing import Any
 from .models import _FuncModel, Result
-from rich.live import Live, VerticalOverflowMethod
+from rich.live import Live
 
 
 class Printer:
