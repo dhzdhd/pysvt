@@ -7,6 +7,7 @@ from typing import Any, Callable
 import re
 from pysut.utils.printer import Printer
 from pysut.utils.models import _ClsModel, _FuncModel, Result
+from pysut.utils.ctx import Timer
 from rich.console import Console
 
 type Function = Callable[..., Any]
@@ -58,11 +59,12 @@ class test:
                     self._printer.pre_validation(index, data)
 
                     partial_method = partial(method, obj(*self._data.init[index]))
-                    result = self._validate(data, partial_method)
+                    with Timer() as timer:
+                        result = self._validate(data, partial_method)
                     failures += 0 if result.valid else 1
 
                     self._printer.post_validation(
-                        result, data.name, self._show_error_only
+                        result, data.name, timer(), self._show_error_only
                     )
 
             self._printer.finish(len(self._data.data), failures)

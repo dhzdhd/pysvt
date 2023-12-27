@@ -2,7 +2,7 @@
 name = "pysut"
 version = "0.1.0"
 description = "A simple test case runner in Python that uses TOML configurations and decorator syntax."
-authors = ["dhzdhd"]
+authors = ["dhzdhd <dhzdhd@proton.me>"]
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",

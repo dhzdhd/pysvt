@@ -17,7 +17,7 @@ class Solution:
         pass
 
     def max_area(self, height: list[int], amount: int) -> int:
-        time.sleep(1)
+        # time.sleep(1)
         choices = list(it.combinations(enumerate(height), amount))
         m = max(choices, key=key)
 
