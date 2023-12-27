@@ -176,9 +176,11 @@ class test:
         if inputs != [] and len(inputs) != len(outputs):
             raise ValidationError("Input and output data are not of the same length")
 
-        if len(outputs) != len(init):
-            raise ValidationError("Not enough init data passed")
+        if init != [] and len(outputs) != len(init):
+            raise ValidationError("Init and output data are not of the same length")
 
+        if init == []:
+            init = [[] for _ in range(len(outputs))]
         while len(outputs) != len(metadata):
             metadata.append("No metadata")
         while len(outputs) != len(name):
