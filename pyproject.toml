@@ -5,14 +5,22 @@ description = "A simple test case runner in Python that uses TOML configurations
 authors = ["dhzdhd <dhzdhd@proton.me>"]
 readme = "README.md"
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+license = "LICENSE"
 
 [tool.hatch.metadata]
 Homepage = "https://github.com/dhzdhd/pysut"
+Repository = "https://github.com/dhzdhd/pysut.git"
 Issues = "https://github.com/dhzdhd/pysut/issues"
+# Changelog = "https://github.com/dhzdhd/pysut/blob/master/CHANGELOG.md"
+# Documentation = ""
 
 [tool.poetry.dependencies]
 python = "^3.12"

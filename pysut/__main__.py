@@ -100,7 +100,6 @@ class test:
             return toml.load(f)
 
     def _parse(self, data: dict[str, Any], is_class: bool) -> None:
-        # Set defaults at the end
         inputs = []
         outputs = []
         metadata = []
@@ -154,20 +153,36 @@ class test:
                 raise ValidationError("No output data given or output key is invalid")
 
             if "metadata" in data:
-                metadata = data["metadata"]
+                if isinstance(data["metadata"], list):
+                    metadata = data["metadata"]
+                else:
+                    metadata = [data["metadata"] for _ in range(len(outputs))]
 
             if "name" in data:
-                name = data["name"]
+                if isinstance(data["name"], list):
+                    name = data["name"]
+                else:
+                    name = [data["name"] for _ in range(len(outputs))]
 
             if "init" in data:
-                init = data["init"]
+                if isinstance(data["init"], list):
+                    init = data["init"]
+                else:
+                    init = [data["init"] for _ in range(len(outputs))]
 
         if outputs == []:
             raise ValidationError("No output data given or output key is invalid")
 
-        # Check all kw len
         if inputs != [] and len(inputs) != len(outputs):
             raise ValidationError("Input and output data are not of the same length")
+
+        if len(outputs) != len(init):
+            raise ValidationError("Not enough init data passed")
+
+        while len(outputs) != len(metadata):
+            metadata.append("No metadata")
+        while len(outputs) != len(name):
+            name.append("Test case")
 
         if is_class:
             self._data.init = init
