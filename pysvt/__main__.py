@@ -1,16 +1,3 @@
-"""
-This module contains the `test` decorator class and supporting functions for validating test cases.
-
-Classes:
-- `ValidationError`: Custom exception class for validation errors.
-- `test`: Decorator class for defining and running test cases.
-
-Functions:
-- `_load_file`: Loads a TOML file and returns its contents as a dictionary.
-- `_parse`: Parses the test case data from the TOML file and populates the `_ClsModel` or `_FuncModel` objects.
-- `_validate`: Validates a test case by executing the test function and comparing the result with the expected output.
-"""
-
 import inspect
 import re
 import tomllib as toml

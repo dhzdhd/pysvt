@@ -24,7 +24,7 @@ A simple test case runner in Python that uses TOML configurations and decorator 
 
     TOML
 
-    ```toml
+    ```python
     name = ["One and Two", "Two and Three"]
     metadata = ["Add to 3", "Add to 5"]
     i = [[1, 2], [2, 3]]
@@ -33,7 +33,7 @@ A simple test case runner in Python that uses TOML configurations and decorator 
 
     or
 
-    ```toml
+    ```python
     [[cases]]
     name = "One and Two"
     i = [1, 2]
@@ -66,7 +66,7 @@ A simple test case runner in Python that uses TOML configurations and decorator 
 
     TOML
 
-    ```toml
+    ```python
     name = ["One and Two", "Two and Three"]
     metadata = ["Add to 3", "Add to 5"]
     init = []  # Has to be specified, indicates class constructor arguments
@@ -76,7 +76,7 @@ A simple test case runner in Python that uses TOML configurations and decorator 
 
     or
 
-    ```toml
+    ```python
     [[cases]]
     name = "One and Two"
     i = [1, 2]
