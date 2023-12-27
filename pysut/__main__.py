@@ -1,3 +1,16 @@
+"""
+This module contains the `test` decorator class and supporting functions for validating test cases.
+
+Classes:
+- `ValidationError`: Custom exception class for validation errors.
+- `test`: Decorator class for defining and running test cases.
+
+Functions:
+- `_load_file`: Loads a TOML file and returns its contents as a dictionary.
+- `_parse`: Parses the test case data from the TOML file and populates the `_ClsModel` or `_FuncModel` objects.
+- `_validate`: Validates a test case by executing the test function and comparing the result with the expected output.
+"""
+
 import inspect
 import time
 import tomllib as toml
@@ -21,6 +34,31 @@ class ValidationError(Exception):
 
 
 class test:
+    """
+    Decorator class for defining and running test cases.
+
+    Args:
+    - `file` (str or Path): The path to the TOML file containing the test case data.
+    - `method` (str or None): The name of the method to be tested (for class-based tests). Default is None.
+    - `error_only` (bool): Flag indicating whether to display only the failed test cases. Default is False.
+
+    Raises:
+    - `ValueError`: If the `file` argument is not of type str or Path or `method` argument is not provided for instance methods.
+    - `ValidationError`: If the decorator is applied incorrectly or the test case data is invalid.
+
+    Usage:
+    ```
+    @test("data.toml")
+    def test_function(input, expected_output):
+        # Test implementation
+
+    @test("data.toml", method="test_method")
+    class TestClass:
+        def test_method(self, input, expected_output):
+            # Test implementation
+    ```
+    """
+
     def __init__(
         self, file: str | Path, method: str | None = None, error_only: bool = False
     ) -> None:
@@ -96,10 +134,30 @@ class test:
         return wrapper
 
     def _load_file(self) -> dict[str, Any]:
+        """
+        Loads a TOML file and returns its contents as a dictionary.
+
+        Returns:
+        - dict: The contents of the TOML file.
+
+        Raises:
+        - FileNotFoundError: If the specified file does not exist.
+        - tomllib.TomlDecodeError: If the TOML file is not valid.
+        """
         with open(self._file, "rb") as f:
             return toml.load(f)
 
     def _parse(self, data: dict[str, Any], is_class: bool) -> None:
+        """
+        Parses the test case data from the TOML file and populates the `_ClsModel` or `_FuncModel` objects.
+
+        Args:
+        - `data` (dict): The test case data loaded from the TOML file.
+        - `is_class` (bool): Flag indicating whether the test is class-based or function-based.
+
+        Raises:
+        - `ValidationError`: If the test case data is invalid.
+        """
         inputs = []
         outputs = []
         metadata = []
@@ -203,6 +261,19 @@ class test:
                 self._data.append(func_model)
 
     def _validate(self, data: _FuncModel, func: Function) -> Result:
+        """
+        Validates a test case by executing the test function and comparing the result with the expected output.
+
+        Args:
+        - `data` (_FuncModel): The test case data.
+        - `func` (Function): The test function to be executed.
+
+        Returns:
+        - Result: The validation result, including the actual result and a flag indicating whether the test passed or failed.
+
+        Raises:
+        - `ValidationError`: If the test case inputs are not of the expected format.
+        """
         if data.inputs is not None:
             if not isinstance(data.inputs, list):
                 raise ValidationError("Inputs must be nested within a list")
