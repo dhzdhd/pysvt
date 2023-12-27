@@ -1,9 +1,10 @@
 from rich import print
 from rich.console import Console
 from rich.layout import Layout
-from rich.panel import Panel
-from .models import _FuncModel, Result
 from rich.live import Live
+from rich.panel import Panel
+
+from .models import Result, _FuncModel
 
 
 class Printer:
@@ -12,12 +13,12 @@ class Printer:
         self._layout = Layout()
 
     def init(self, data: list[_FuncModel]) -> Live:
-        for index, item in enumerate(data):
-            l = Layout(
+        for item in data:
+            child = Layout(
                 Panel(item.name, title=item.name),
                 name=item.name,
             )
-            self._layout.add_split(l)
+            self._layout.add_split(child)
 
         self._console.clear(True)
 
@@ -32,25 +33,27 @@ class Printer:
         return self._live
 
     def pre_validation(self, index: int, data: _FuncModel) -> None:
-        l = next(filter(lambda x: x.name == data.name, self._layout.children))
+        child = next(filter(lambda x: x.name == data.name, self._layout.children))
+
         string = f"Input - {data.inputs}\nExpected output - {data.output}"
-        l.update(Panel(string, title=data.name))
+        child.update(Panel(string, title=data.name))
 
     def post_validation(
         self, res: Result, title: str, time_taken: float, show_error_only: bool
     ) -> None:
-        l = next(filter(lambda x: x.name == title, self._layout.children))
+        child = next(filter(lambda x: x.name == title, self._layout.children))
+        panel: Panel = child.renderable
 
-        out_str = f"{str(l.renderable.renderable)}\nActual output - {res.data}"
+        out_str = f"{str(panel.renderable)}\nActual output - {res.data}"
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
         time_str = (
             f"{time_taken * 1000:.3f} ms" if time_taken < 1.0 else f"{time_taken:.3f} s"
         )
 
         if show_error_only and res.valid:
-            l.visible = False
+            child.visible = False
         else:
-            l.update(
+            child.update(
                 Panel(
                     out_str,
                     title=f"{emoji}  {title}",

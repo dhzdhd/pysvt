@@ -6,8 +6,8 @@ from typing import Any
 class _FuncModel:
     inputs: list[Any]
     output: Any
-    name: list[str]
-    metadata: list[str]
+    name: str
+    metadata: str
 
 
 @dataclass()

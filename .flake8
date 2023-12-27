@@ -6,4 +6,6 @@ exclude=constants.py,__pycache__,.cache,
         .md,.svg,.png
         tests,
         venv,.venv,
-        .json
+        .json,
+        pysut/__init__.py
+extend-ignore=E501

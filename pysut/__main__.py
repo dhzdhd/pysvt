@@ -12,16 +12,17 @@ Functions:
 """
 
 import inspect
+import re
 import tomllib as toml
-from functools import wraps, partial
+from functools import partial, wraps
 from pathlib import Path
 from typing import Any, Callable
-import re
-from pysut.utils.printer import Printer
-from pysut.utils.models import _ClsModel, _FuncModel, Result
-from pysut.utils.ctx import Timer
+
 from rich.console import Console
 
+from pysut.utils.ctx import Timer
+from pysut.utils.models import Result, _ClsModel, _FuncModel
+from pysut.utils.printer import Printer
 
 console = Console()
 
