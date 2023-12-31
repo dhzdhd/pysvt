@@ -1,5 +1,5 @@
 import pytest
-from pysvt import test_fn, ValidationError
+from pysvt import test, ValidationError
 import json
 import tomllib
 
@@ -15,22 +15,22 @@ class Sample:
 
 def test_incorrect_toml_file():
     with pytest.raises(FileNotFoundError):
-        test_fn("tests/inputt.toml")(sample)
+        test("tests/inputt.toml")(sample)
 
 
 def test_invalid_file_entry_type():
     with pytest.raises(ValueError):
-        test_fn(5)(sample)
+        test(5)(sample)
 
 
 def test_instance_methods():
     with pytest.raises(ValueError):
-        test_fn(5)(Sample.sample)
+        test(5)(Sample.sample)
 
 
 def test_incorrect_output_key():
     with pytest.raises(ValidationError):
-        sample = test_fn("tests/data/func_incorrect.toml")(sample)
+        test("tests/data/func_incorrect.toml")(sample)
 
 
 def _load_toml(file):

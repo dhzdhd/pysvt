@@ -46,12 +46,24 @@ class test:
     """
 
     def __init__(
-        self, file: str | Path, method: str | None = None, error_only: bool = False
+        self,
+        file: str | Path | None = None,
+        data: dict[str, Any] | None = None,
+        method: str | None = None,
+        error_only: bool = False,
     ) -> None:
-        if not (isinstance(file, Path) or isinstance(file, str)):
-            raise ValueError("File type should be either str or Path")
+        if (file is None and data is None) or (file is not None and data is not None):
+            raise ValueError("Either of file or data argument should be filled")
 
-        self._file = file if isinstance(file, Path) else Path(file)
+        if file is not None:
+            if not (isinstance(file, Path) or isinstance(file, str)):
+                raise ValueError("File type should be either str or Path")
+
+            self._raw = file if isinstance(file, Path) else Path(file)
+
+        if data is not None:
+            self._raw = data
+
         self._method = method
         self._show_error_only = error_only
 
@@ -63,7 +75,7 @@ class test:
         is_class = inspect.isclass(obj)
         self._data = _ClsModel([], []) if is_class else []
 
-        self._parse(self._load_file(), is_class)
+        self._parse(self._load_data(), is_class)
 
         if is_class:
             if self._method is None:
@@ -120,7 +132,7 @@ class test:
 
         return wrapper
 
-    def _load_file(self) -> dict[str, Any]:
+    def _load_data(self) -> dict[str, Any]:
         """
         Loads a TOML file and returns its contents as a dictionary.
 
@@ -131,8 +143,11 @@ class test:
         - FileNotFoundError: If the specified file does not exist.
         - tomllib.TomlDecodeError: If the TOML file is not valid.
         """
-        with open(self._file, "rb") as f:
-            return toml.load(f)
+        if isinstance(self._raw, Path):
+            with open(self._raw, "rb") as f:
+                return toml.load(f)
+        else:
+            return self._raw
 
     def _parse(self, data: dict[str, Any], is_class: bool) -> None:
         """
