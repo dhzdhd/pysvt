@@ -1,0 +1,11 @@
+[[cases]]
+name = "Normal case"
+input = ["abc", "def"]
+output = "abcdef"
+metadata = "Basic concatenation"
+
+[[cases]]
+name = "Edge case"
+i = ["aa", "bb"]
+o = "aabb"
+metadata = "Complex concatenation"

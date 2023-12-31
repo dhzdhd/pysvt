@@ -1,0 +1,14 @@
+[[cases]]
+name = "Normal case"
+input = [1, 2]
+output = 3
+# init can be ignored when not using instance methods
+init = [1, 2]
+metadata = "Basic addition functionality"
+
+[[cases]]
+name = "Edge case"
+i = [2, 3]
+o = 5
+init = [1, 2]
+metadata = "Basic addition functionality"

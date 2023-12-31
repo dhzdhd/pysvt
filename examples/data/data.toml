@@ -1,0 +1,6 @@
+name = ["Normal case", "Edge case"]
+i = [[1, 2], [2, 3]]
+out = [3, 5]
+# init can be ignored when not using instance methods
+init = [[1, 2], [1, 2]]
+metadata = ["Basic addition functionality", "Basic addition functionality"]
