@@ -24,7 +24,8 @@ class test:
     Decorator class for defining and running test cases.
 
     Args:
-    - `file` (str or Path): The path to the TOML file containing the test case data.
+    - `file` (str or Path): The path to the TOML file containing the test case data. Default is None.
+    - `data` (dict[str, Any]): The test case data as a dictionary. Default is None.
     - `method` (str or None): The name of the method to be tested (for class-based tests). Default is None.
     - `error_only` (bool): Flag indicating whether to display only the failed test cases. Default is False.
 

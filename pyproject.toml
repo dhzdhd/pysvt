@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pysvt"
-version = "0.1.2"
+version = "0.2.0"
 description = "A simple test case runner in Python that uses TOML configurations and decorator syntax."
 authors = ["dhzdhd <dhzdhd@proton.me>"]
 readme = "README.md"
