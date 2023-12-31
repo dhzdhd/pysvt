@@ -27,6 +27,8 @@ class test:
     - `file` (str or Path): The path to the TOML file containing the test case data. Default is None.
     - `data` (dict[str, Any]): The test case data as a dictionary. Default is None.
     - `method` (str or None): The name of the method to be tested (for class-based tests). Default is None.
+    - `preprocess` (Callable[..., Any] or None): A function to preprocess the test inputs. Default is None.
+    - `postprocess` (Callable[..., Any] or None): A function to postprocess the test outputs. Default is None.
     - `error_only` (bool): Flag indicating whether to display only the failed test cases. Default is False.
 
     Raises:
@@ -51,6 +53,8 @@ class test:
         file: str | Path | None = None,
         data: dict[str, Any] | None = None,
         method: str | None = None,
+        preprocess: Callable[..., Any] | None = None,
+        postprocess: Callable[..., Any] | None = None,
         error_only: bool = False,
     ) -> None:
         if (file is None and data is None) or (file is not None and data is not None):
@@ -66,6 +70,8 @@ class test:
             self._raw = data
 
         self._method = method
+        self._preprocess = preprocess
+        self._postprocess = postprocess
         self._show_error_only = error_only
 
         self._printer = Printer(console)
@@ -251,8 +257,11 @@ class test:
             self._data.init = init
 
         for i in range(len(outputs)):
+            _input = (
+                inputs[i] if self._preprocess is None else self._preprocess(inputs[i])
+            )
             func_model = _FuncModel(
-                inputs=inputs[i],
+                inputs=_input,
                 output=outputs[i],
                 metadata=metadata[i],
                 name=f"{name[i]} {Printer.number(i + 1)}",
@@ -284,5 +293,8 @@ class test:
             result = func(*data.inputs)
         else:
             result = func()
+
+        if self._postprocess is not None:
+            result = self._postprocess(result)
 
         return Result(result, result == data.output)
