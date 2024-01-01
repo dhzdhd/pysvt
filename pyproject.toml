@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pysvt"
-version = "0.2.0"
+version = "0.3.0"
 description = "A simple test case runner in Python that uses TOML configurations and decorator syntax."
 authors = ["dhzdhd <dhzdhd@proton.me>"]
 readme = "README.md"
@@ -19,7 +19,7 @@ license = "LICENSE"
 Homepage = "https://github.com/dhzdhd/pysvt"
 Repository = "https://github.com/dhzdhd/pysvt.git"
 Issues = "https://github.com/dhzdhd/pysvt/issues"
-# Changelog = "https://github.com/dhzdhd/pysvt/blob/master/CHANGELOG.md"
+Changelog = "https://github.com/dhzdhd/pysvt/blob/master/CHANGELOG.md"
 # Documentation = ""
 
 [tool.poetry.dependencies]
@@ -36,7 +36,6 @@ pyright = "^1.1.342"
 pytest-cov = "^4.1.0"
 
 [tool.taskipy.tasks]
-example = "python examples/__main__.py"
 format = "black --check ."
 lint = "flake8 pysvt"
 sort = "isort pysvt"
