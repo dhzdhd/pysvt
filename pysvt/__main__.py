@@ -30,6 +30,7 @@ class test:
     - `preprocess` (Callable[..., Any] or None): A function to preprocess the test inputs. Default is None.
     - `postprocess` (Callable[..., Any] or None): A function to postprocess the test outputs. Default is None.
     - `error_only` (bool): Flag indicating whether to display only the failed test cases. Default is False.
+    - `is_live` (bool): Flag indicating whether to run the tests in live mode. Default is False.
 
     Raises:
     - `ValueError`: If the `file` argument is not of type str or Path or `method` argument is not provided for instance methods.
@@ -38,13 +39,13 @@ class test:
     Usage:
     ```
     @test("data.toml")
-    def test_function(input, expected_output):
-        # Test implementation
+    def function(arg1, arg2):
+        # Your code
 
-    @test("data.toml", method="test_method")
-    class TestClass:
-        def test_method(self, input, expected_output):
-            # Test implementation
+    @test("data.toml", method="method")
+    class Demo:
+        def method(self, arg1, arg2):
+            # Your code
     ```
     """
 
@@ -102,7 +103,7 @@ class test:
                     failures = 0
 
                     for index, data in enumerate(self._data.data):
-                        self._printer.pre_validation(index, data)
+                        self._printer.pre_validation(data)
 
                         partial_method = partial(method, obj(*self._data.init[index]))
                         with Timer() as timer:
@@ -140,7 +141,7 @@ class test:
                     failures = 0
 
                     for index, data in enumerate(self._data):
-                        self._printer.pre_validation(index, data)
+                        self._printer.pre_validation(data)
 
                         with Timer() as timer:
                             result = self._validate(data, obj)
