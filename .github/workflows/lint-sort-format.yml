@@ -1,0 +1,37 @@
+name: Lint, sort and format package
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+
+    - name: Install and configure Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: 1.7.1
+        
+    - name: Install dependencies
+      run: poetry install --no-interaction --no-root
+        
+    - name: Lint with flake8
+      run: poetry run task lint
+      
+    - name: Check import order with isort
+      run: poetry run task sortc
+
+    - name: Check formatting with black
+      run: poetry run task format
+
