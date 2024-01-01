@@ -56,6 +56,7 @@ class test:
         preprocess: Callable[..., Any] | None = None,
         postprocess: Callable[..., Any] | None = None,
         error_only: bool = False,
+        is_live: bool = False,
     ) -> None:
         if (file is None and data is None) or (file is not None and data is not None):
             raise ValueError("Either of file or data argument should be filled")
@@ -73,8 +74,9 @@ class test:
         self._preprocess = preprocess
         self._postprocess = postprocess
         self._show_error_only = error_only
+        self._is_live = is_live
 
-        self._printer = Printer(console)
+        self._printer = Printer(console, self._is_live)
 
         self._data: _ClsModel | list[_FuncModel] | None = None
 
@@ -95,43 +97,75 @@ class test:
                     "The decorator cannot be applied to non-instance methods. Instead, use it directly on the function"
                 )
 
-            with self._printer.init(self._data.data) as _:
-                failures = 0
+            if self._is_live:
+                with self._printer.init_live(self._data.data) as _:
+                    failures = 0
 
-                for index, data in enumerate(self._data.data):
-                    self._printer.pre_validation(index, data)
+                    for index, data in enumerate(self._data.data):
+                        self._printer.pre_validation(index, data)
 
-                    partial_method = partial(method, obj(*self._data.init[index]))
-                    with Timer() as timer:
-                        result = self._validate(data, partial_method)
-                    failures += 0 if result.valid else 1
+                        partial_method = partial(method, obj(*self._data.init[index]))
+                        with Timer() as timer:
+                            result = self._validate(data, partial_method)
+                        failures += 0 if result.valid else 1
 
-                    self._printer.post_validation(
-                        result, data.name, timer(), self._show_error_only
-                    )
+                        self._printer.post_validation(
+                            result, data.name, timer(), self._show_error_only
+                        )
 
-            self._printer.finish(len(self._data.data), failures)
+                self._printer.clean_up()
+                self._printer.finish(len(self._data.data), failures)
+            else:
+                with self._printer.init_normal() as _:
+                    failures = 0
+
+                    for index, data in enumerate(self._data.data):
+                        partial_method = partial(method, obj(*self._data.init[index]))
+                        with Timer() as timer:
+                            result = self._validate(data, partial_method)
+                        failures += 0 if result.valid else 1
+
+                        self._printer.post_validation_normal(
+                            result, data, timer(), self._show_error_only
+                        )
+                self._printer.finish(len(self._data.data), failures)
         else:
             if "self" in obj.__code__.co_varnames:
                 raise ValidationError(
                     "The decorator cannot be applied to instance methods. Instead, apply it on the class and pass the name of the method as an argument"
                 )
 
-            with self._printer.init(self._data) as _:
-                failures = 0
+            if self._is_live:
+                with self._printer.init_live(self._data) as _:
+                    failures = 0
 
-                for index, data in enumerate(self._data):
-                    self._printer.pre_validation(index, data)
+                    for index, data in enumerate(self._data):
+                        self._printer.pre_validation(index, data)
 
-                    with Timer() as timer:
-                        result = self._validate(data, obj)
-                    failures += 0 if result.valid else 1
+                        with Timer() as timer:
+                            result = self._validate(data, obj)
+                        failures += 0 if result.valid else 1
 
-                    self._printer.post_validation(
-                        result, data.name, timer(), self._show_error_only
-                    )
+                        self._printer.post_validation(
+                            result, data.name, timer(), self._show_error_only
+                        )
 
-            self._printer.finish(len(self._data), failures)
+                self._printer.clean_up()
+                self._printer.finish(len(self._data), failures)
+            else:
+                with self._printer.init_normal() as _:
+                    failures = 0
+
+                    for index, data in enumerate(self._data):
+                        with Timer() as timer:
+                            result = self._validate(data, obj)
+                        failures += 0 if result.valid else 1
+
+                        self._printer.post_validation_normal(
+                            result, data, timer(), self._show_error_only
+                        )
+
+                self._printer.finish(len(self._data), failures)
 
         @wraps(obj)
         def wrapper(*args, **kwargs):

@@ -3,16 +3,18 @@ from rich.console import Console
 from rich.layout import Layout
 from rich.live import Live
 from rich.panel import Panel
+from rich.status import Status
 
 from .models import Result, _FuncModel
 
 
 class Printer:
-    def __init__(self, console: Console) -> None:
+    def __init__(self, console: Console, is_live: bool) -> None:
         self._console = console
+        self._is_live = is_live
         self._layout = Layout()
 
-    def init(self, data: list[_FuncModel]) -> Live:
+    def init_live(self, data: list[_FuncModel]) -> Live:
         for item in data:
             child = Layout(
                 Panel(item.name, title=item.name),
@@ -31,6 +33,9 @@ class Printer:
             vertical_overflow="visible",
         )
         return self._live
+
+    def init_normal(self) -> Status:
+        return Status("Running tests")
 
     def pre_validation(self, index: int, data: _FuncModel) -> None:
         child = next(filter(lambda x: x.name == data.name, self._layout.children))
@@ -62,12 +67,33 @@ class Printer:
                 )
             )
 
-    def finish(self, total: int, failures: int) -> None:
+    def post_validation_normal(
+        self, res: Result, data: _FuncModel, time_taken: float, show_error_only: bool
+    ) -> None:
+        out_str = f"Input - {data.inputs}\nExpected output - {data.output}\nActual output - {res.data}"
+        emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
+        time_str = (
+            f"{time_taken * 1000:.3f} ms" if time_taken < 1.0 else f"{time_taken:.3f} s"
+        )
+        panel = Panel(
+            out_str,
+            title=f"{emoji}  {data.name}",
+            subtitle=f"Time taken: {time_str}",
+            subtitle_align="right",
+        )
+
+        if show_error_only and res.valid:
+            self._console.print(panel)
+            return
+        self._console.print(panel)
+
+    def clean_up(self) -> None:
         self._console.clear(True)
         self._live.stop()
 
         print(self._layout)
 
+    def finish(self, total: int, failures: int) -> None:
         success = Printer.success(f"{total - failures} passed")
         failure = Printer.error(f"{failures} failed")
 
