@@ -33,6 +33,8 @@ class test:
     - `postprocess` (Callable[..., Any] or None): A function to postprocess the test outputs. Default is None.
     - `error_only` (bool): Flag indicating whether to display only the failed test cases. Default is False.
     - `is_live` (bool): Flag indicating whether to run the tests in live mode. Default is False.
+    - `pretty_print_errors` (bool): Flag indicating whether to pretty print errors with colors and more information. Default is True.
+    - `redirect_stdout` (bool): Flag indicating whether to redirect all stdout (print statements, etc) to the pretty printed panels. Default is True.
 
     Raises:
     - `ValueError`: If the `file` argument is not of type str or Path or `method` argument is not provided for instance methods.
@@ -48,6 +50,14 @@ class test:
     class Demo:
         def method(self, arg1, arg2):
             # Your code
+
+    data = {
+        "i": [[1, 2], [2, 3]],
+        "o": [2, 3],
+    }
+    @test(data=data)
+    def function(arg1, arg2):
+        # Your code
     ```
     """
 

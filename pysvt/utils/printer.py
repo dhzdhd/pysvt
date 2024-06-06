@@ -153,8 +153,8 @@ class Printer:
         """
         out_str = f"Input - {data.inputs}\nExpected output - {data.output}\nActual output - {res.data}"
 
-        if res.stdout is not None:
-            out_str += f"\n\nStdout -\n{res.stdout}"
+        if res.stdout is not None and res.stdout.strip() != "":
+            out_str += f"\n\nStdout -\n{res.stdout.strip()}"
 
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
         time_str = (
