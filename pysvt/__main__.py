@@ -1,11 +1,11 @@
 import inspect
 import re
 import tomllib as toml
+from contextlib import redirect_stdout
 from functools import partial, wraps
+from io import StringIO
 from pathlib import Path
 from typing import Any, Callable
-from contextlib import redirect_stdout
-from io import StringIO
 
 from rich.console import Console
 

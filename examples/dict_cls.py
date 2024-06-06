@@ -1,6 +1,5 @@
 from pysvt import test
 
-
 data = {
     "name": ["Normal case", "Edge case"],
     "i": [[1, 2], [2, 3]],
