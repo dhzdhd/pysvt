@@ -4,6 +4,8 @@ import tomllib as toml
 from functools import partial, wraps
 from pathlib import Path
 from typing import Any, Callable
+from contextlib import redirect_stdout
+from io import StringIO
 
 from rich.console import Console
 
@@ -58,6 +60,8 @@ class test:
         postprocess: Callable[..., Any] | None = None,
         error_only: bool = False,
         is_live: bool = False,
+        pretty_print_errors: bool = True,
+        redirect_stdout: bool = True,
     ) -> None:
         if (file is None and data is None) or (file is not None and data is not None):
             raise ValueError("Either of file or data argument should be filled")
@@ -76,6 +80,8 @@ class test:
         self._postprocess = postprocess
         self._show_error_only = error_only
         self._is_live = is_live
+        self._pretty_print_errors = pretty_print_errors
+        self._redirect_stdout = redirect_stdout
 
         self._printer = Printer(console, self._is_live)
 
@@ -117,18 +123,18 @@ class test:
                 self._printer.clean_up()
                 self._printer.finish(len(self._data.data), failures)
             else:
-                with self._printer.init_normal() as _:
-                    failures = 0
+                # with self._printer.init_normal() as _:
+                failures = 0
 
-                    for index, data in enumerate(self._data.data):
-                        partial_method = partial(method, obj(*self._data.init[index]))
-                        with Timer() as timer:
-                            result = self._validate(data, partial_method)
-                        failures += 0 if result.valid else 1
+                for index, data in enumerate(self._data.data):
+                    partial_method = partial(method, obj(*self._data.init[index]))
+                    with Timer() as timer:
+                        result = self._validate(data, partial_method)
+                    failures += 0 if result.valid else 1
 
-                        self._printer.post_validation_normal(
-                            result, data, timer(), self._show_error_only
-                        )
+                    self._printer.post_validation_normal(
+                        result, data, timer(), self._show_error_only
+                    )
                 self._printer.finish(len(self._data.data), failures)
         else:
             if "self" in obj.__code__.co_varnames:
@@ -154,17 +160,17 @@ class test:
                 self._printer.clean_up()
                 self._printer.finish(len(self._data), failures)
             else:
-                with self._printer.init_normal() as _:
-                    failures = 0
+                # with self._printer.init_normal() as _:
+                failures = 0
 
-                    for index, data in enumerate(self._data):
-                        with Timer() as timer:
-                            result = self._validate(data, obj)
-                        failures += 0 if result.valid else 1
+                for index, data in enumerate(self._data):
+                    with Timer() as timer:
+                        result = self._validate(data, obj)
+                    failures += 0 if result.valid else 1
 
-                        self._printer.post_validation_normal(
-                            result, data, timer(), self._show_error_only
-                        )
+                    self._printer.post_validation_normal(
+                        result, data, timer(), self._show_error_only
+                    )
 
                 self._printer.finish(len(self._data), failures)
 
@@ -321,15 +327,41 @@ class test:
         Raises:
         - `ValidationError`: If the test case inputs are not of the expected format.
         """
+        partial_fn = partial(func)
+        stdout = None
+
         if data.inputs is not None:
             if not isinstance(data.inputs, list):
                 raise ValidationError("Inputs must be nested within a list")
+            partial_fn = partial(func, *data.inputs)
 
-            result = func(*data.inputs)
+        if self._pretty_print_errors:
+            try:
+                if self._redirect_stdout:
+                    with redirect_stdout(StringIO()) as f:
+                        result = partial_fn()
+                    stdout = f.getvalue()
+                else:
+                    result = partial_fn()
+            except:
+                console.print_exception(show_locals=True)
         else:
-            result = func()
+            if self._redirect_stdout:
+                with redirect_stdout(StringIO()) as f:
+                    result = partial_fn()
+                stdout = f.getvalue()
+            else:
+                result = partial_fn()
+        # else:
+        #     if self._pretty_print_errors:
+        #         try:
+        #             result = func()
+        #         except:
+        #             console.print_exception(show_locals=True)
+        #     else:
+        #         result = func()
 
         if self._postprocess is not None:
             result = self._postprocess(result)
 
-        return Result(result, result == data.output)
+        return Result(result, stdout, result == data.output)

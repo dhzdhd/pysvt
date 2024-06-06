@@ -152,6 +152,10 @@ class Printer:
             show_error_only (bool): Flag indicating whether to show only the error panel.
         """
         out_str = f"Input - {data.inputs}\nExpected output - {data.output}\nActual output - {res.data}"
+
+        if res.stdout is not None:
+            out_str += f"\n\nStdout -\n{res.stdout}"
+
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
         time_str = (
             f"{time_taken * 1000:.3f} ms" if time_taken < 1.0 else f"{time_taken:.3f} s"

@@ -19,4 +19,5 @@ class _ClsModel:
 @dataclass(frozen=True)
 class Result:
     data: Any
+    stdout: str | None
     valid: bool

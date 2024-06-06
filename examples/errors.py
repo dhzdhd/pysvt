@@ -11,4 +11,5 @@ data = {
 
 @test(data=data)
 def func(arg1: int, arg2: int) -> int:
+    raise TypeError("this is an error")
     return arg1 + arg2

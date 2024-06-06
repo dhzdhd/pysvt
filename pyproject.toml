@@ -41,7 +41,7 @@ lint = "flake8 pysvt"
 sort = "isort pysvt"
 sortc = "isort -c pysvt"
 test = "pytest tests"
-type = "pyright "
+type = "pyright"
 cov = "pytest --cov=tests/"
 publish = "poetry publish --build"
 

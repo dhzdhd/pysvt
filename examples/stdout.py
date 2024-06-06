@@ -11,4 +11,6 @@ data = {
 
 @test(data=data)
 def func(arg1: int, arg2: int) -> int:
+    print(f"Arg 1: {arg1}")
+    print(f"Arg 2: {arg2}")
     return arg1 + arg2
