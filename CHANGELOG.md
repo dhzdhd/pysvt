@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2024-06-07
+
+### Added
+
+- `pretty_print_errors` parameter to pretty print errors with colors and more information.
+- `redirect_stdout` parameter to redirect all stdout (print statements, etc) to the pretty printed panels.
+- New examples for the above parameters.
+
+### Removed
+
+- The loading animation when executing the decorator.
+
 ## [0.3.0] - 2024-01-01
 
 ### Added

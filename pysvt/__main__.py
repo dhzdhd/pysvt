@@ -353,7 +353,7 @@ class test:
                     stdout = f.getvalue()
                 else:
                     result = partial_fn()
-            except:
+            except Exception:
                 console.print_exception(show_locals=True)
         else:
             if self._redirect_stdout:
