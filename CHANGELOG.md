@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.1] - 2024-06-07
+
+### Changed
+
+- Font weight of panel titles (Input, Expected output, etc) to bold
+
+### Fixed
+
+- Inconsistent inputs being displayed due to mutation of the inputs occuring in the executed function.
+
 ## [0.4.0] - 2024-06-07
 
 ### Added

@@ -357,7 +357,6 @@ class test:
                     stdout = f.getvalue()
                 else:
                     result = partial_fn()
-                print(partial_fn.__)
             except Exception:
                 console.print_exception(show_locals=True)
         else:

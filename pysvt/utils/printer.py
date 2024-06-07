@@ -151,14 +151,14 @@ class Printer:
             time_taken (float): The time taken for the validation.
             show_error_only (bool): Flag indicating whether to show only the error panel.
         """
-        input_str = f"{Printer.bold("Input")} - {data.inputs}"
-        exp_out_str = f"{Printer.bold("Expected output")} - {data.output}"
-        act_out_str = f"{Printer.bold("Actual output")} - {res.data}"
+        input_str = f"""{Printer.bold("Input")} - {data.inputs}"""
+        exp_out_str = f"""{Printer.bold("Expected output")} - {data.output}"""
+        act_out_str = f"""{Printer.bold("Actual output")} - {res.data}"""
 
         out_str = f"{input_str}\n{exp_out_str}\n{act_out_str}"
 
         if res.stdout is not None and res.stdout.strip() != "":
-            out_str += f"\n\n{Printer.bold("Stdout")} -\n{res.stdout.strip()}"
+            out_str += f"""\n\n{Printer.bold("Stdout")} -\n{res.stdout.strip()}"""
 
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
         time_str = (
