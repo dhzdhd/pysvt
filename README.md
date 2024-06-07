@@ -2,13 +2,19 @@
 
 ## About
 
-A simple test case runner in Python that uses TOML configurations and decorator syntax.
+A simple test case runner in Python that uses data in the format of a TOML file or dictionary and uses decorator syntax.
 
 ## Installation
 
 `pip install pysvt`
 
+## Upgrade version
+
+`pip install --upgrade pysvt`
+
 ## Usage
+
+Check the [examples directory](https://github.com/dhzdhd/pysvt/tree/master/examples) for more elaborate examples.
 
 - Function
 
