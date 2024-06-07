@@ -2,6 +2,7 @@ import inspect
 import re
 import tomllib as toml
 from contextlib import redirect_stdout
+from copy import deepcopy
 from functools import partial, wraps
 from io import StringIO
 from pathlib import Path
@@ -135,6 +136,8 @@ class test:
             else:
                 # with self._printer.init_normal() as _:
                 failures = 0
+
+                print(self._data.data)
 
                 for index, data in enumerate(self._data.data):
                     partial_method = partial(method, obj(*self._data.init[index]))
@@ -343,7 +346,8 @@ class test:
         if data.inputs is not None:
             if not isinstance(data.inputs, list):
                 raise ValidationError("Inputs must be nested within a list")
-            partial_fn = partial(func, *data.inputs)
+            # deepcopy to avoid inconsistent inputs being printed due to mutations
+            partial_fn = partial(func, *deepcopy(data.inputs))
 
         if self._pretty_print_errors:
             try:
@@ -353,6 +357,7 @@ class test:
                     stdout = f.getvalue()
                 else:
                     result = partial_fn()
+                print(partial_fn.__)
             except Exception:
                 console.print_exception(show_locals=True)
         else:
