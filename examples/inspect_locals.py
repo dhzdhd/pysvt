@@ -8,6 +8,10 @@
 #     ...
 #
 # or as a part of @test
+# For example -
+# @test(..., inspect_locals=True)
+# def foo(...):
+#   ...
 
 
 import sys
