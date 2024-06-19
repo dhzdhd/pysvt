@@ -36,6 +36,7 @@ class test:
     - `is_live` (bool): Flag indicating whether to run the tests in live mode. Default is False.
     - `pretty_print_errors` (bool): Flag indicating whether to pretty print errors with colors and more information. Default is True.
     - `redirect_stdout` (bool): Flag indicating whether to redirect all stdout (print statements, etc) to the pretty printed panels. Default is True.
+    - `show_locals` (bool): Flag indicating whether to show local variable values after execution of the function. Default is False.
 
     Raises:
     - `ValueError`: If the `file` argument is not of type str or Path or `method` argument is not provided for instance methods.
@@ -64,8 +65,8 @@ class test:
 
     def __init__(
         self,
-        file: str | Path | None = None,
         data: dict[str, Any] | None = None,
+        file: str | Path | None = None,
         method: str | None = None,
         preprocess: Callable[..., Any] | None = None,
         postprocess: Callable[..., Any] | None = None,
@@ -73,7 +74,11 @@ class test:
         is_live: bool = False,
         pretty_print_errors: bool = True,
         redirect_stdout: bool = True,
+        show_locals: bool = False,
     ) -> None:
+        if show_locals:
+            raise NotImplementedError("show_locals has not been implemented yet")
+
         if (file is None and data is None) or (file is not None and data is not None):
             raise ValueError("Either of file or data argument should be filled")
 
@@ -93,6 +98,7 @@ class test:
         self._is_live = is_live
         self._pretty_print_errors = pretty_print_errors
         self._redirect_stdout = redirect_stdout
+        self._show_locals = show_locals
 
         self._printer = Printer(console, self._is_live)
 
@@ -136,8 +142,6 @@ class test:
             else:
                 # with self._printer.init_normal() as _:
                 failures = 0
-
-                print(self._data.data)
 
                 for index, data in enumerate(self._data.data):
                     partial_method = partial(method, obj(*self._data.init[index]))
@@ -379,3 +383,9 @@ class test:
             result = self._postprocess(result)
 
         return Result(result, stdout, result == data.output)
+
+
+class inspect_locals:
+    def __init__(self) -> None: ...
+
+    def __call__(self, obj: object) -> Any: ...
