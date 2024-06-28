@@ -1,3 +1,5 @@
+import inspect
+
 from rich import print
 from rich.console import Console
 from rich.layout import Layout
@@ -107,7 +109,12 @@ class Printer:
         child.update(Panel(string, title=data.name))
 
     def post_validation(
-        self, res: Result, title: str, time_taken: float, show_error_only: bool
+        self,
+        res: Result,
+        title: str,
+        obj: object,
+        time_taken: float,
+        show_error_only: bool,
     ) -> None:
         """
         Update the display panel with the result of the validation.
@@ -140,7 +147,12 @@ class Printer:
             )
 
     def post_validation_normal(
-        self, res: Result, data: _FuncModel, time_taken: float, show_error_only: bool
+        self,
+        res: Result,
+        data: _FuncModel,
+        obj: object,
+        time_taken: float,
+        show_error_only: bool,
     ) -> None:
         """
         Prints the result of a validation in a formatted panel.
@@ -148,14 +160,20 @@ class Printer:
         Args:
             res (Result): The validation result.
             data (_FuncModel): The function model containing input, expected output, and name.
+            obj (object): The function on which the decorator was applied.
             time_taken (float): The time taken for the validation.
             show_error_only (bool): Flag indicating whether to show only the error panel.
         """
-        input_str = f"""{Printer.bold("Input")} - {data.inputs}"""
+        input_args = inspect.getfullargspec(obj).args
+
+        input_title_str = f"""{Printer.bold("Input")} -"""
+        input_str = "\n".join(
+            map(lambda t: f"    {t[0]} - {t[1]}", zip(input_args, data.inputs))
+        )
         exp_out_str = f"""{Printer.bold("Expected output")} - {data.output}"""
         act_out_str = f"""{Printer.bold("Actual output")} - {res.data}"""
 
-        out_str = f"{input_str}\n{exp_out_str}\n{act_out_str}"
+        out_str = f"{input_title_str}\n{input_str}\n{exp_out_str}\n{act_out_str}"
 
         if res.stdout is not None and res.stdout.strip() != "":
             out_str += f"""\n\n{Printer.bold("Stdout")} -\n{res.stdout.strip()}"""

@@ -2,7 +2,7 @@
 
 ## About
 
-A simple test case runner in Python that uses data in the format of a TOML file or dictionary and uses decorator syntax.
+A simple test case runner in Python that takes data in the format of a TOML file or dictionary and uses decorator syntax.
 
 ## Installation
 

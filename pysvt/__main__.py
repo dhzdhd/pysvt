@@ -27,8 +27,8 @@ class test:
     Decorator class for defining and running test cases.
 
     Args:
-    - `file` (str or Path): The path to the TOML file containing the test case data. Default is None.
     - `data` (dict[str, Any]): The test case data as a dictionary. Default is None.
+    - `file` (str or Path): The path to the TOML file containing the test case data. Default is None.
     - `method` (str or None): The name of the method to be tested (for class-based tests). Default is None.
     - `preprocess` (Callable[..., Any] or None): A function to preprocess the test inputs. Default is None.
     - `postprocess` (Callable[..., Any] or None): A function to postprocess the test outputs. Default is None.
@@ -134,7 +134,7 @@ class test:
                         failures += 0 if result.valid else 1
 
                         self._printer.post_validation(
-                            result, data.name, timer(), self._show_error_only
+                            result, data.name, obj, timer(), self._show_error_only
                         )
 
                 self._printer.clean_up()
@@ -150,7 +150,7 @@ class test:
                     failures += 0 if result.valid else 1
 
                     self._printer.post_validation_normal(
-                        result, data, timer(), self._show_error_only
+                        result, data, obj, timer(), self._show_error_only
                     )
                 self._printer.finish(len(self._data.data), failures)
         else:
@@ -171,7 +171,7 @@ class test:
                         failures += 0 if result.valid else 1
 
                         self._printer.post_validation(
-                            result, data.name, timer(), self._show_error_only
+                            result, data.name, obj, timer(), self._show_error_only
                         )
 
                 self._printer.clean_up()
@@ -186,7 +186,7 @@ class test:
                     failures += 0 if result.valid else 1
 
                     self._printer.post_validation_normal(
-                        result, data, timer(), self._show_error_only
+                        result, data, obj, timer(), self._show_error_only
                     )
 
                 self._printer.finish(len(self._data), failures)
@@ -386,8 +386,6 @@ class test:
 
 
 class inspect_locals:
-    def __init__(self) -> None:
-        ...
+    def __init__(self) -> None: ...
 
-    def __call__(self, obj: object) -> Any:
-        ...
+    def __call__(self, obj: object) -> Any: ...
