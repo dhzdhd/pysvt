@@ -33,7 +33,6 @@ class test:
     - `preprocess` (Callable[..., Any] or None): A function to preprocess the test inputs. Default is None.
     - `postprocess` (Callable[..., Any] or None): A function to postprocess the test outputs. Default is None.
     - `error_only` (bool): Flag indicating whether to display only the failed test cases. Default is False.
-    - `is_live` (bool): Flag indicating whether to run the tests in live mode. Default is False.
     - `pretty_print_errors` (bool): Flag indicating whether to pretty print errors with colors and more information. Default is True.
     - `redirect_stdout` (bool): Flag indicating whether to redirect all stdout (print statements, etc) to the pretty printed panels. Default is True.
     - `show_locals` (bool): Flag indicating whether to show local variable values after execution of the function. Default is False.
@@ -71,7 +70,6 @@ class test:
         preprocess: Callable[..., Any] | None = None,
         postprocess: Callable[..., Any] | None = None,
         error_only: bool = False,
-        is_live: bool = False,
         pretty_print_errors: bool = True,
         redirect_stdout: bool = True,
         show_locals: bool = False,
@@ -95,12 +93,11 @@ class test:
         self._preprocess = preprocess
         self._postprocess = postprocess
         self._show_error_only = error_only
-        self._is_live = is_live
         self._pretty_print_errors = pretty_print_errors
         self._redirect_stdout = redirect_stdout
         self._show_locals = show_locals
 
-        self._printer = Printer(console, self._is_live)
+        self._printer = Printer(console)
 
         self._data: _ClsModel | list[_FuncModel] | None = None
 
@@ -121,75 +118,38 @@ class test:
                     "The decorator cannot be applied to non-instance methods. Instead, use it directly on the function"
                 )
 
-            if self._is_live:
-                with self._printer.init_live(self._data.data) as _:
-                    failures = 0
+            # with self._printer.init_normal() as _:
+            failures = 0
 
-                    for index, data in enumerate(self._data.data):
-                        self._printer.pre_validation(data)
+            for index, data in enumerate(self._data.data):
+                partial_method = partial(method, obj(*self._data.init[index]))
+                with Timer() as timer:
+                    result = self._validate(data, partial_method)
+                failures += 0 if result.valid else 1
 
-                        partial_method = partial(method, obj(*self._data.init[index]))
-                        with Timer() as timer:
-                            result = self._validate(data, partial_method)
-                        failures += 0 if result.valid else 1
-
-                        self._printer.post_validation(
-                            result, data.name, obj, timer(), self._show_error_only
-                        )
-
-                self._printer.clean_up()
-                self._printer.finish(len(self._data.data), failures)
-            else:
-                # with self._printer.init_normal() as _:
-                failures = 0
-
-                for index, data in enumerate(self._data.data):
-                    partial_method = partial(method, obj(*self._data.init[index]))
-                    with Timer() as timer:
-                        result = self._validate(data, partial_method)
-                    failures += 0 if result.valid else 1
-
-                    self._printer.post_validation_normal(
-                        result, data, obj, timer(), self._show_error_only
-                    )
-                self._printer.finish(len(self._data.data), failures)
+                self._printer.post_validation_normal(
+                    result, data, obj, timer(), self._show_error_only
+                )
+            self._printer.finish(len(self._data.data), failures)
         else:
             if "self" in obj.__code__.co_varnames:
                 raise ValidationError(
                     "The decorator cannot be applied to instance methods. Instead, apply it on the class and pass the name of the method as an argument"
                 )
 
-            if self._is_live:
-                with self._printer.init_live(self._data) as _:
-                    failures = 0
+            # with self._printer.init_normal() as _:
+            failures = 0
 
-                    for index, data in enumerate(self._data):
-                        self._printer.pre_validation(data)
+            for index, data in enumerate(self._data):
+                with Timer() as timer:
+                    result = self._validate(data, obj)
+                failures += 0 if result.valid else 1
 
-                        with Timer() as timer:
-                            result = self._validate(data, obj)
-                        failures += 0 if result.valid else 1
+                self._printer.post_validation_normal(
+                    result, data, obj, timer(), self._show_error_only
+                )
 
-                        self._printer.post_validation(
-                            result, data.name, obj, timer(), self._show_error_only
-                        )
-
-                self._printer.clean_up()
-                self._printer.finish(len(self._data), failures)
-            else:
-                # with self._printer.init_normal() as _:
-                failures = 0
-
-                for index, data in enumerate(self._data):
-                    with Timer() as timer:
-                        result = self._validate(data, obj)
-                    failures += 0 if result.valid else 1
-
-                    self._printer.post_validation_normal(
-                        result, data, obj, timer(), self._show_error_only
-                    )
-
-                self._printer.finish(len(self._data), failures)
+            self._printer.finish(len(self._data), failures)
 
         @wraps(obj)
         def wrapper(*args, **kwargs):
