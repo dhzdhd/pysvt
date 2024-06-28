@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2024-06-29
+
+### Changed
+
+- Input argument names along with values instead of the previous list of inputs
+
+### Removed
+
+- Live mode (`is_live` parameter)
+
 ## [0.4.3] - 2024-06-20
 
 ### Fixed
