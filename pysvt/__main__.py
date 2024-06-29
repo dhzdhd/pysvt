@@ -43,11 +43,11 @@ class test:
 
     Usage:
     ```
-    @test("data.toml")
+    @test(file="data.toml")
     def function(arg1, arg2):
         # Your code
 
-    @test("data.toml", method="method")
+    @test(file="data.toml", method="method")
     class Demo:
         def method(self, arg1, arg2):
             # Your code
@@ -330,14 +330,6 @@ class test:
                 stdout = f.getvalue()
             else:
                 result = partial_fn()
-        # else:
-        #     if self._pretty_print_errors:
-        #         try:
-        #             result = func()
-        #         except:
-        #             console.print_exception(show_locals=True)
-        #     else:
-        #         result = func()
 
         if self._postprocess is not None:
             result = self._postprocess(result)
@@ -346,8 +338,6 @@ class test:
 
 
 class inspect_locals:
-    def __init__(self) -> None:
-        ...
+    def __init__(self) -> None: ...
 
-    def __call__(self, obj: object) -> Any:
-        ...
+    def __call__(self, obj: object) -> Any: ...

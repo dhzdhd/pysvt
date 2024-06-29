@@ -100,3 +100,7 @@ Check the [examples directory](https://github.com/dhzdhd/pysvt/tree/master/examp
 
     - Input key can be either of - i, in, input, inputs
     - Output key can be either of - o, out, output, outputs
+
+## Running examples
+
+`poetry run python -m examples.<example_file_name>`
