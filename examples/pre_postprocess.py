@@ -9,7 +9,11 @@ def postprocess(lst: list[str]) -> str:
     return "".join(lst)
 
 
-@test(file="data/prepostprocess.toml", preprocess=preprocess, postprocess=postprocess)
+@test(
+    file="examples/data/prepostprocess.toml",
+    preprocess=preprocess,
+    postprocess=postprocess,
+)
 def func(arg1: list[str], arg2: list[str]) -> list[str]:
     new = arg1 + arg2
     return new

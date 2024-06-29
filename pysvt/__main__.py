@@ -118,7 +118,7 @@ class test:
                     "The decorator cannot be applied to non-instance methods. Instead, use it directly on the function"
                 )
 
-            # with self._printer.init_normal() as _:
+            # with self._printer.init() as _:
             failures = 0
 
             for index, data in enumerate(self._data.data):
@@ -127,7 +127,7 @@ class test:
                     result = self._validate(data, partial_method)
                 failures += 0 if result.valid else 1
 
-                self._printer.post_validation_normal(
+                self._printer.post_validation(
                     result, data, obj, timer(), self._show_error_only
                 )
             self._printer.finish(len(self._data.data), failures)
@@ -137,7 +137,7 @@ class test:
                     "The decorator cannot be applied to instance methods. Instead, apply it on the class and pass the name of the method as an argument"
                 )
 
-            # with self._printer.init_normal() as _:
+            # with self._printer.init() as _:
             failures = 0
 
             for index, data in enumerate(self._data):
@@ -145,7 +145,7 @@ class test:
                     result = self._validate(data, obj)
                 failures += 0 if result.valid else 1
 
-                self._printer.post_validation_normal(
+                self._printer.post_validation(
                     result, data, obj, timer(), self._show_error_only
                 )
 
@@ -338,6 +338,8 @@ class test:
 
 
 class inspect_locals:
-    def __init__(self) -> None: ...
+    def __init__(self) -> None:
+        ...
 
-    def __call__(self, obj: object) -> Any: ...
+    def __call__(self, obj: object) -> Any:
+        ...

@@ -16,10 +16,10 @@ class Printer:
         console (Console): The console object used for printing.
 
     Methods:
-        init_normal() -> Status:
+        init() -> Status:
             Initializes the printer in normal mode and returns the status object.
 
-        post_validation_normal(res: Result, data: _FuncModel, time_taken: float, show_error_only: bool) -> None:
+        post_validation(res: Result, data: _FuncModel, time_taken: float, show_error_only: bool) -> None:
             Updates the information after validating a test case in normal mode.
 
         finish(total: int, failures: int) -> None:
@@ -42,7 +42,7 @@ class Printer:
         self._console = console
         self._layout = Layout()
 
-    def init_normal(self) -> Status:
+    def init(self) -> Status:
         """
         Initializes the printer in normal mode.
 
@@ -51,7 +51,7 @@ class Printer:
         """
         return Status("Running tests")
 
-    def post_validation_normal(
+    def post_validation(
         self,
         res: Result,
         data: _FuncModel,
