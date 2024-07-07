@@ -128,7 +128,7 @@ class test:
                 failures += 0 if result.valid else 1
 
                 self._printer.post_validation(
-                    result, data, obj, timer(), self._show_error_only
+                    result, data, partial_method, timer(), self._show_error_only
                 )
             self._printer.finish(len(self._data.data), failures)
         else:
@@ -338,8 +338,6 @@ class test:
 
 
 class inspect_locals:
-    def __init__(self) -> None:
-        ...
+    def __init__(self) -> None: ...
 
-    def __call__(self, obj: object) -> Any:
-        ...
+    def __call__(self, obj: object) -> Any: ...
