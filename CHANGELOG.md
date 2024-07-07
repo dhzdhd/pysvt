@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [0.5.1] - 2024-07-07
+
+### Fixed
+
+- Empty input argument list for decorators applied on classes
+
 ## [0.5.0] - 2024-06-29
 
 ### Changed
