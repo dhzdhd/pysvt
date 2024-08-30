@@ -21,3 +21,4 @@ class Result:
     data: Any
     stdout: str | None
     valid: bool
+    local_vars: dict[str, Any] | None

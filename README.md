@@ -23,7 +23,7 @@ Check the [examples directory](https://github.com/dhzdhd/pysvt/tree/master/examp
     ```python
     from pysvt import test
 
-    @test("<path_to_TOML_file>")
+    @test(file="<path_to_TOML_file>")
     def function(arg1: int, arg2: int) -> int:
         return arg1 + arg2
     ```
@@ -64,7 +64,7 @@ Check the [examples directory](https://github.com/dhzdhd/pysvt/tree/master/examp
     from pysvt import test
 
     # Specify the name of the method as the second argument
-    @test("<path_to_TOML_file>", "function")
+    @test(file="<path_to_TOML_file>", "function")
     class Solution:
         def function(self, arg1: int, arg2: int) -> int:
             return arg1 + arg2
@@ -104,3 +104,10 @@ Check the [examples directory](https://github.com/dhzdhd/pysvt/tree/master/examp
 ## Running examples
 
 `poetry run python -m examples.<example_file_name>`
+
+## Creating a new release
+
+- Update the version in `pyproject.toml`
+- Update `CHANGELOG.md`
+- Run local lint/format/tests
+- Create new git tag and push

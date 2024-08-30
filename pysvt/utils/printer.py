@@ -75,6 +75,8 @@ class Printer:
         input_str = "\n".join(
             map(lambda t: f"    {t[0]} - {t[1]}", zip(input_args, data.inputs))
         )
+        input_str = "    None" if input_str.strip() == "" else input_str
+
         exp_out_str = f"""{Printer.bold("Expected output")} - {data.output}"""
         act_out_str = f"""{Printer.bold("Actual output")} - {res.data}"""
 
@@ -82,6 +84,12 @@ class Printer:
 
         if res.stdout is not None and res.stdout.strip() != "":
             out_str += f"""\n\n{Printer.bold("Stdout")} -\n{res.stdout.strip()}"""
+
+        if res.local_vars is not None:
+            out_str += f"\n\n{Printer.bold("Local variables")} -"
+
+            for k, v in res.local_vars.items():
+                out_str += f"\n    {k} - {v}"
 
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
         time_str = (

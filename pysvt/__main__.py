@@ -11,6 +11,7 @@ from typing import Any, Callable
 from rich.console import Console
 
 from pysvt.utils.ctx import Timer
+from pysvt.utils.validation import get_result_locals
 from pysvt.utils.models import Result, _ClsModel, _FuncModel
 from pysvt.utils.printer import Printer
 
@@ -74,9 +75,6 @@ class test:
         redirect_stdout: bool = True,
         show_locals: bool = False,
     ) -> None:
-        if show_locals:
-            raise NotImplementedError("show_locals has not been implemented yet")
-
         if (file is None and data is None) or (file is not None and data is not None):
             raise ValueError("Either of file or data argument should be filled")
 
@@ -118,7 +116,6 @@ class test:
                     "The decorator cannot be applied to non-instance methods. Instead, use it directly on the function"
                 )
 
-            # with self._printer.init() as _:
             failures = 0
 
             for index, data in enumerate(self._data.data):
@@ -137,7 +134,6 @@ class test:
                     "The decorator cannot be applied to instance methods. Instead, apply it on the class and pass the name of the method as an argument"
                 )
 
-            # with self._printer.init() as _:
             failures = 0
 
             for index, data in enumerate(self._data):
@@ -306,6 +302,7 @@ class test:
         """
         partial_fn = partial(func)
         stdout = None
+        local_vars = None
 
         if data.inputs is not None:
             if not isinstance(data.inputs, list):
@@ -317,29 +314,39 @@ class test:
             try:
                 if self._redirect_stdout:
                     with redirect_stdout(StringIO()) as f:
-                        result = partial_fn()
+                        if self._show_locals:
+                            result, local_vars = get_result_locals(partial_fn)
+                        else:
+                            result = partial_fn()
                     stdout = f.getvalue()
                 else:
-                    result = partial_fn()
+                    if self._show_locals:
+                        result, local_vars = get_result_locals(partial_fn)
+                    else:
+                        result = partial_fn()
             except Exception:
                 console.print_exception(show_locals=True)
         else:
             if self._redirect_stdout:
                 with redirect_stdout(StringIO()) as f:
-                    result = partial_fn()
+                    if self._show_locals:
+                        result, local_vars = get_result_locals(partial_fn)
+                    else:
+                        result = partial_fn()
                 stdout = f.getvalue()
             else:
-                result = partial_fn()
+                if self._show_locals:
+                    result, local_vars = get_result_locals(partial_fn)
+                else:
+                    result = partial_fn()
 
         if self._postprocess is not None:
             result = self._postprocess(result)
 
-        return Result(result, stdout, result == data.output)
+        return Result(result, stdout, result == data.output, local_vars)
 
 
 class inspect_locals:
-    def __init__(self) -> None:
-        ...
+    def __init__(self) -> None: ...
 
-    def __call__(self, obj: object) -> Any:
-        ...
+    def __call__(self, obj: object) -> Any: ...
