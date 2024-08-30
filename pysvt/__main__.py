@@ -11,9 +11,9 @@ from typing import Any, Callable
 from rich.console import Console
 
 from pysvt.utils.ctx import Timer
-from pysvt.utils.validation import get_result_locals
 from pysvt.utils.models import Result, _ClsModel, _FuncModel
 from pysvt.utils.printer import Printer
+from pysvt.utils.validation import get_result_locals
 
 console = Console()
 
@@ -347,6 +347,8 @@ class test:
 
 
 class inspect_locals:
-    def __init__(self) -> None: ...
+    def __init__(self) -> None:
+        ...
 
-    def __call__(self, obj: object) -> Any: ...
+    def __call__(self, obj: object) -> Any:
+        ...

@@ -86,7 +86,7 @@ class Printer:
             out_str += f"""\n\n{Printer.bold("Stdout")} -\n{res.stdout.strip()}"""
 
         if res.local_vars is not None:
-            out_str += f"\n\n{Printer.bold("Local variables")} -"
+            out_str += f"""\n\n{Printer.bold("Local variables")} -"""
 
             for k, v in res.local_vars.items():
                 out_str += f"\n    {k} - {v}"

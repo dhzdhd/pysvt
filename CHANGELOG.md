@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2024-08-30
+
+### Added
+
+- `show_locals` parameter to print local variable values after the execution of the function.
 
 ## [0.5.1] - 2024-07-07
 
