@@ -151,14 +151,24 @@ class test:
 
         match self._data:
             case ClsModel():
-                if self._method is None:
-                    raise ValueError("method argument not provided")
+                if self._method is not None:
+                    method = getattr(obj, self._method, None)
+                else:
+                    non_magic_methods = [
+                        func
+                        for name, func in inspect.getmembers(obj, predicate=inspect.isfunction)
+                        if not (name.startswith("__") and name.endswith("__"))
+                    ]
+                    method = non_magic_methods[0] if len(non_magic_methods) == 1 else None
 
-                method = getattr(obj, self._method, None)
-
-                if "self" not in method.__code__.co_varnames:
+                if method is None:
                     raise ValidationError(
-                        "The decorator cannot be applied to non-instance methods. Instead, use it directly on the function"
+                        "The class does not seem to contain any instance methods on which this decorator can be applied."
+                    )
+
+                if method is not None and "self" not in method.__code__.co_varnames:
+                    raise ValidationError(
+                        "The decorator cannot be applied to non-instance methods. Instead, use it directly on the function."
                     )
 
                 failures = 0
