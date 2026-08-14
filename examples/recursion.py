@@ -1,3 +1,5 @@
+"""Reverse array example."""
+
 from pysvt import test
 
 d = {
@@ -6,7 +8,13 @@ d = {
 }
 
 
-def reverse(xs: list, acc: list = []) -> list:
+def reverse(xs: list[int], acc: list[int]) -> list[int]:
+    """Recursively reverse a list by popping elements onto an accumulator.
+
+    :param xs: The list of integers to reverse.
+    :param acc: The accumulator holding reversed elements so far.
+    :return: The fully reversed list once `xs` is empty.
+    """
     if xs == []:
         return acc
     print(f"xs: {xs}, acc: {acc}")
@@ -15,5 +23,10 @@ def reverse(xs: list, acc: list = []) -> list:
 
 
 @test(data=d)
-def reverseArray(a: list):
-    return reverse(a)
+def reverseArray(a: list[int]):
+    """Reverse the input array using the `reverse` helper.
+
+    :param a: The list of integers to reverse.
+    :return: The reversed list.
+    """
+    return reverse(a, [])

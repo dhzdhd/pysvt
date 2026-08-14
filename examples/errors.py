@@ -1,3 +1,5 @@
+"""Error example."""
+
 from pysvt import test
 
 data = {
@@ -10,5 +12,12 @@ data = {
 
 @test(data=data)
 def func(arg1: int, arg2: int) -> int:
+    """Deliberately raise a `TypeError` to test error-handling behavior.
+
+    :param arg1: The first integer operand.
+    :param arg2: The second integer operand.
+    :return: Never returns; always raises `TypeError`.
+    :raises TypeError: Always, to simulate a failing test case.
+    """
     raise TypeError("this is an error")
-    return arg1 + arg2
+    return arg1 + arg2  # pyright:ignore[reportUnreachable]

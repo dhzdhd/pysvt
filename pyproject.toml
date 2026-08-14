@@ -1,58 +1,90 @@
-[tool.poetry]
+[project]
 name = "pysvt"
 version = "0.6.0"
 description = "A simple test case runner in Python that uses TOML configurations and decorator syntax."
-authors = ["dhzdhd <dhzdhd@proton.me>"]
+authors = [{ name = "dhzdhd", email = "dhzdhd@proton.me" }]
 readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-license = "LICENSE"
+dependencies = [
+    "rich>=13.7.0",
+]
 
-[tool.hatch.metadata]
+[project.urls]
 Homepage = "https://github.com/dhzdhd/pysvt"
 Repository = "https://github.com/dhzdhd/pysvt.git"
 Issues = "https://github.com/dhzdhd/pysvt/issues"
 Changelog = "https://github.com/dhzdhd/pysvt/blob/master/CHANGELOG.md"
 # Documentation = ""
 
-[tool.poetry.dependencies]
-python = "^3.8.1"
-rich = "^13.7.0"
-
-[tool.poetry.group.dev.dependencies]
-taskipy = "^1.12.2"
-flake8 = "^6.1.0"
-black = "^23.12.0"
-isort = "^5.13.2"
-pytest = "^7.4.3"
-pyright = "^1.1.342"
-pytest-cov = "^4.1.0"
+[dependency-groups]
+dev = [
+    "taskipy>=1.12.2",
+    "ruff>=0.8.0",
+    "pytest>=7.4.3",
+    "basedpyright>=1.1.342",
+    "pytest-cov>=4.1.0",
+    "pre-commit>=4.0.0",
+]
 
 [tool.taskipy.tasks]
-format = "black --check ."
-lint = "flake8 pysvt"
-sort = "isort pysvt"
-sortc = "isort -c pysvt"
+format = "ruff format --check ."
+lint = "ruff check pysvt"
+sort = "ruff check --select I pysvt"
+sortc = "ruff check --select I --diff pysvt"
 test = "pytest tests"
-type = "pyright"
+type = "basedpyright"
 cov = "pytest --cov=tests/"
-publish = "poetry publish --build"
+publish = "uv build && uv publish"
 
-[tool.pyright]
-include = ["pysvt", "examples"]
+[tool.basedpyright]
+include = ["src/pysvt", "examples"]
 defineConstant = { DEBUG = true }
 reportMissingImports = true
 reportMissingTypeStubs = false
 pythonVersion = "3.12"
 pythonPlatform = "Windows"
+reportAny = false
+reportExplicitAny = false
+reportUnreachable = false
+reportUnnecessaryIsInstance = false
+
+[tool.ruff]
+line-length = 110
+extend-exclude = [
+    "constants.py",
+    "tests",
+    "pysvt/__init__.py",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "D",
+]
+ignore = [
+    "E501",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.5.0"]
+build-backend = "uv_build"

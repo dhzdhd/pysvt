@@ -11,26 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
         with:
           python-version: "3.12"
 
-      - name: Install and configure Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.7.1
-
       - name: Install dependencies
-        run: poetry install --no-interaction --no-root
+        run: uv sync --group dev
 
-      - name: Lint with flake8
-        run: poetry run task lint
+      - name: Lint with ruff
+        run: uv run ruff check .
 
-      - name: Check import order with isort
-        run: poetry run task sortc
-
-      - name: Check formatting with black
-        run: poetry run task format
+      - name: Check formatting with ruff
+        run: uv run ruff format --check .

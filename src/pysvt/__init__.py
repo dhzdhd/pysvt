@@ -7,3 +7,5 @@ Classes:
 """
 
 from .__main__ import ValidationError, test
+
+__all__ = ["ValidationError", "test"]
