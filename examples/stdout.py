@@ -1,3 +1,9 @@
+"""Stdout capture example.
+
+This example demonstrates how pysvt captures stdout output during
+test execution and displays it in the test results.
+"""
+
 from pysvt import test
 
 data = {
@@ -10,6 +16,12 @@ data = {
 
 @test(data=data)
 def func(arg1: int, arg2: int) -> int:
+    """Add two integers and print the arguments to stdout.
+
+    :param arg1: The first integer operand.
+    :param arg2: The second integer operand.
+    :return: The sum of arg1 and arg2.
+    """
     print(f"Arg 1: {arg1}")
     print(f"Arg 2: {arg2}")
     return arg1 + arg2

@@ -1,4 +1,8 @@
-"""Reverse array example."""
+"""Recursive function test example.
+
+This example demonstrates testing a recursive function that reverses
+a list using an accumulator pattern.
+"""
 
 from pysvt import test
 
@@ -23,7 +27,7 @@ def reverse(xs: list[int], acc: list[int]) -> list[int]:
 
 
 @test(data=d)
-def reverseArray(a: list[int]):
+def reverseArray(a: list[int]) -> list[int]:
     """Reverse the input array using the `reverse` helper.
 
     :param a: The list of integers to reverse.

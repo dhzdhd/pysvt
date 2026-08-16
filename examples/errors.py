@@ -1,4 +1,9 @@
-"""Error example."""
+"""Error handling example.
+
+This example demonstrates how pysvt handles exceptions raised during
+test execution. The test function deliberately raises a TypeError
+to show error reporting behavior.
+"""
 
 from pysvt import test
 
@@ -12,11 +17,11 @@ data = {
 
 @test(data=data)
 def func(arg1: int, arg2: int) -> int:
-    """Deliberately raise a `TypeError` to test error-handling behavior.
+    """Deliberately raise a TypeError to test error-handling behavior.
 
     :param arg1: The first integer operand.
     :param arg2: The second integer operand.
-    :return: Never returns; always raises `TypeError`.
+    :return: Never returns; always raises TypeError.
     :raises TypeError: Always, to simulate a failing test case.
     """
     raise TypeError("this is an error")

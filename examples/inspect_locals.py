@@ -1,4 +1,8 @@
-"""Inspect locals example."""
+"""Inspect locals example.
+
+This example demonstrates how to capture and display local variables
+during test execution using the `show_locals=True` parameter.
+"""
 
 from typing import Any
 
@@ -11,10 +15,10 @@ d: dict[str, Any] = {
 
 
 @test(data=d, show_locals=True)
-def hello():
+def hello() -> int:
     """Inspect local variables.
 
-    :return: Hardcoded integer
+    :return: Hardcoded integer 5.
     """
     a = 5
 
