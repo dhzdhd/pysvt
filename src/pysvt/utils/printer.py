@@ -3,12 +3,13 @@
 import inspect
 from typing import final
 
-from rich.console import Console
+from rich.console import Console, Group, RenderableType
 from rich.layout import Layout
 from rich.panel import Panel
 from rich.status import Status
+from rich.table import Table
 
-from .models import FuncModel, Result
+from .models import FuncModel, Result, Variable
 
 
 @final
@@ -53,28 +54,30 @@ class Printer:
         """
         input_args = inspect.getfullargspec(obj).args
 
-        input_title_str = f"""{Printer.bold("Input")} -"""
         input_str = "\n".join(map(lambda t: f"    {t[0]} - {t[1]}", zip(input_args, data.inputs)))
-        input_str = "    None" if input_str.strip() == "" else input_str
-
-        exp_out_str = f"""{Printer.bold("Expected output")} - {data.output}"""
-        act_out_str = f"""{Printer.bold("Actual output")} - {res.data}"""
-
-        out_str = f"{input_title_str}\n{input_str}\n{exp_out_str}\n{act_out_str}"
-
-        if res.stdout is not None and res.stdout.strip() != "":
-            out_str += f"""\n\n{Printer.bold("Stdout")} -\n{res.stdout.strip()}"""
-
-        if res.local_vars is not None:
-            out_str += f"""\n\n{Printer.bold("Local variables")} -"""
-
-            for k, v in res.local_vars.items():
-                out_str += f"\n    {k} - {v}"
+        input_str = "None" if input_str.strip() == "" else input_str
 
         emoji = ":white_check_mark:" if res.valid else ":cross_mark:"
         time_str = f"{time_taken * 1000:.3f} ms" if time_taken < 1.0 else f"{time_taken:.3f} s"
+
+        output_layout = Layout()
+        output_layout.split_row(
+            Layout(Panel(str(data.output), title="Expected output", style="dim"), ratio=1),
+            Layout(Panel(str(res.data), title="Actual output", style="dim"), ratio=1),
+        )
+
+        panels: list[RenderableType] = []
+        panels.append(Panel(input_str, title="Input", style="dim"))
+        panels.append(output_layout)
+        if res.stdout is not None and res.stdout.strip() != "":
+            panels.append(Panel(res.stdout.strip(), title="Stdout", style="dim"))
+        if res.local_vars:
+            panels.append(self.variable_table(res.local_vars))
+
+        element_group = Group(*panels)
+
         panel = Panel(
-            out_str,
+            element_group,
             title=f"{emoji}  {data.name}",
             subtitle=f"Time taken: {time_str}",
             subtitle_align="right",
@@ -84,6 +87,32 @@ class Printer:
             self._console.print(panel)
             return
         self._console.print(panel)
+
+    def variable_table(self, local_vars: list[Variable]) -> Table:
+        """Create a table displaying local variables from execution frames.
+
+        :param local_vars: List of Variable objects containing frame data.
+        :return: A Rich Table with columns for frame index, variable names,
+            values, line numbers, and source code.
+        """
+        table = Table(title="Local variables", style="dim", expand=True)
+        table.add_column("Frame", style="dim")
+        table.add_column("Variable")
+        table.add_column("Value")
+        table.add_column("Line number")
+        table.add_column("Code")
+
+        for idx, var in enumerate(local_vars):
+            table.add_row(
+                str(idx),
+                "\n".join(var.names),
+                "\n".join(map(str, var.values)),
+                str(var.line_number),
+                var.code,
+            )
+            table.add_section()
+
+        return table
 
     def finish(self, total: int, failures: int) -> None:
         """Print the final test execution summary.

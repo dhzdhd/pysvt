@@ -35,6 +35,22 @@ class ClsModel:
 
 
 @dataclass(frozen=True)
+class Variable:
+    """Represents a captured local variable from an execution frame.
+
+    :param names: List of variable names (for tuple unpacking, multiple assignments).
+    :param values: List of corresponding variable values.
+    :param line_number: Source code line number where the variable was captured.
+    :param code: The source code line containing the variable assignment.
+    """
+
+    names: list[str]
+    values: list[Any]
+    line_number: int
+    code: str
+
+
+@dataclass(frozen=True)
 class Result:
     """The outcome of validating a single test case.
 
@@ -49,4 +65,4 @@ class Result:
     data: Any
     stdout: str | None
     valid: bool
-    local_vars: dict[str, Any] | None
+    local_vars: list[Variable] | None

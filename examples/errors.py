@@ -20,4 +20,4 @@ def func(arg1: int, arg2: int) -> int:
     :raises TypeError: Always, to simulate a failing test case.
     """
     raise TypeError("this is an error")
-    return arg1 + arg2  # pyright:ignore[reportUnreachable]
+    return arg1 + arg2

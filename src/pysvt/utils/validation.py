@@ -1,13 +1,16 @@
 """Validation utility to capture local variable information."""
 
+import linecache
 import sys
 from types import FrameType
 from typing import Any, Callable, Literal
 
+from pysvt.utils.models import Variable
+
 
 def get_result_locals(
     func: Callable[..., Any], *args: list[Any], **kwargs: dict[str, Any]
-) -> tuple[Any, dict[str, Any] | None]:
+) -> tuple[Any, list[Variable]]:
     """Call a function and capture its local variables at return time.
 
     Uses `sys.settrace` to snoop the frame of the first call into `func`,
@@ -20,31 +23,33 @@ def get_result_locals(
         local variables, or `None` for the locals if the frame was never
         captured.
     """
-    frame: FrameType | None = None
-    trace = sys.gettrace()
+    target_frame: FrameType | None = None
+    snapshots: list[Variable] = []
+    old_trace = sys.gettrace()
 
-    def snatch_locals(
-        _frame: FrameType, name: Literal["call", "line", "return", "exception", "opcode"], _arg: Any
-    ):
+    def tracer(frame: FrameType, event: Literal["call", "line", "return", "exception", "opcode"], _arg: Any):
         """Trace function that captures the frame on the first 'call' event.
 
-        :param _frame: The frame being traced.
-        :param name: The type of trace event.
+        :param frame: The frame being traced.
+        :param event: The type of trace event.
         :param _arg: Event-specific argument (unused).
         :return: The original trace function, to keep tracing enabled.
         """
-        nonlocal frame
-        if frame is None and name == "call":
-            frame = _frame
-            sys.settrace(trace)
-        return trace
+        nonlocal target_frame
+        if event == "call" and target_frame is None:
+            target_frame = frame
+            return tracer
+        if event == "line" and frame is target_frame:
+            code = linecache.getline(frame.f_code.co_filename, frame.f_lineno).strip()
+            snapshots.append(
+                Variable(list(frame.f_locals.keys()), list(frame.f_locals.values()), frame.f_lineno, code)
+            )
+        return tracer
 
-    sys.settrace(snatch_locals)
+    sys.settrace(tracer)
     try:
         result = func(*args, **kwargs)
     finally:
-        sys.settrace(trace)
+        sys.settrace(old_trace)
 
-    locals = frame.f_locals if frame is not None else None
-
-    return (result, locals)
+    return (result, snapshots)
